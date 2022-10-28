@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: sps 0.1.0\n"
-"POT-Creation-Date: 2022-01-05 00:12\n"
+"POT-Creation-Date: 2022-10-23 22:36\n"
 "PO-Revision-Date: 2021-08-17\n"
 "Last-Translator: Steve Martin <stevemartin041@gmail.com>\n"
 "Language-Team: none\n"
@@ -13,32 +13,46 @@ msgstr ""
 msgid "'x' must be a strictly positive and finite numeric vector"
 msgstr "'x' doit être un vecteur numérique strictement positif et fini"
 
-msgid "'N' must be a positive and finite number"
-msgstr "'N' doit être un nombre positif et fini"
-
-msgid "sample size 'N' is greater than or equal to population size"
-msgstr ""
-"la taille de l'échantillon 'N' est supérieure ou égale à la taille de la "
-"population"
+msgid "'n' must be a positive and finite numeric vector"
+msgstr "'n' doit être un vecteur numérique positif et fini"
 
 msgid "'x' and 's' must be the same length"
 msgstr "'x' et 's' doivent avoir la même longueur"
 
-msgid "sample size 'n' is greater than or equal to population size"
+msgid "'n' must have a single sample size for each level in 's'"
 msgstr ""
-"la taille de l'échantillon 'n' est supérieure ou égale à la taille de la "
-"population"
+"'n' doit avoir une taille d'échantillon unique pour chaque niveau dans 's'"
 
-msgid "'n' must be a positive and finite numeric vector"
-msgstr "'n' doit être un vecteur numérique positif et fini"
+msgid "'s' cannot contain NAs"
+msgstr "'s' ne peut pas contenir de NA"
 
-msgid "'n' must have a single sample size for each level in 's' (stratum)"
+msgid "sample size 'n' is greater than population size"
 msgstr ""
-"'n' doit avoir une taille d'échantillon unique pour chaque niveau dans "
-"'s' (strate)"
+"la taille de l'échantillon 'n' est supérieure à la taille de la population"
 
-msgid "'x' and 'prn' must be the same length"
-msgstr "'x' et 'prn' doivent avoir la même longueur"
+msgid "'N' must be a positive and finite number"
+msgstr "'N' doit être un nombre positif et fini"
+
+msgid "sample size 'N' is greater than population size"
+msgstr ""
+"la taille de l'échantillon 'N' est supérieure à la taille de la population"
+
+msgid "'initial' must be a positive and finite numeric vector"
+msgstr "'initial' doit être un vecteur numérique positif et fini"
+
+msgid "'initial' must have a single allocation size for each level in 's'"
+msgstr ""
+"'initial' doit avoir une taille d'échantillon unique pour chaque niveau dans 's'"
+
+msgid "'initial' must be smaller than the population size for each stratum"
+msgstr ""
+"'initial' doit être inférieur à la taille de la population pour chaque strate"
+
+msgid "initial allocation is larger than 'N'"
+msgstr "l'allocation initiale est supérieure à 'N'"
+
+msgid "'s' and 'prn' must be the same length"
+msgstr "'s' et 'prn' doivent avoir la même longueur"
 
 msgid "'prn' must be a numeric vector between 0 and 1"
 msgstr "'prn' doit être un vecteur numérique compris entre 0 et 1"
@@ -59,3 +73,6 @@ msgstr "'tau' doit être un nombre supérieur ou égal à 1"
 msgid "some replicate weights are negative; try increasing 'tau'"
 msgstr ""
 "certains poids de rééchantillonnage sont négatifs; essayez d'augmenter 'tau'"
+
+#~ msgid "'min' must be a positive and finite number"
+#~ msgstr "'min' doit être un nombre positif et fini"
