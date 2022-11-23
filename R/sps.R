@@ -1,66 +1,56 @@
 #---- Internal helpers ----
 # Sequential Poisson sampling
-.sps <- function(p, n, prn = NULL) {
+.sps <- function(p, n, u) {
   ts <- p < 1
   ta <- which(!ts)
   ts <- which(ts)
   n_ts <- n - length(ta)
   # sample the take somes
   keep <- if (n_ts > 0) {
-    z <- if (is.null(prn)) runif(length(ts)) else prn[ts]
-    order(z / p[ts])[seq_len(n_ts)]
+    order(u[ts] / p[ts])[seq_len(n_ts)]
   }
-  res <- c(ta, ts[keep])
-  structure(
-    res,
-    weights = 1 / p[res],
-    levels = rep(c("TA", "TS"), c(n - n_ts, n_ts)),
-    class = c("sps", class(res))
-  )
+  c(ta, ts[keep])
 }
 
 # Ordinary Poisson sampling
-.ps <- function(p, n, prn = NULL) {
-  z <- if (is.null(prn)) runif(length(p)) else prn
-  res <- which(z < p)
-  weights = 1 / p[res]
-  structure(
-    res,
-    weights = weights,
-    levels = replace(rep("TA", length(res)), weights > 1, "TS"),
-    class = c("sps", class(res))
-  )
+.ps <- function(p, n, u) {
+  # u is always < 1, so take alls are always included
+  which(u < p)
 }
 
 #---- Stratified sampling ----
 stratify <- function(f) {
   f <- match.fun(f)
   # return function
-  function(x, n, s = gl(1, length(x)), prn = NULL) {
+  function(x, n, strata = gl(1, length(x)), prn = runif(length(x))) {
     n <- trunc(n)
-    s <- as.factor(s)
-    check_inclusion_prob(x, n, s)
-    if (!is.null(prn)) {
-      if (length(s) != length(prn)) {
-        stop(
-          gettext("'s' and 'prn' must be the same length")
-        )
-      }
-      if (not_prob(prn)) {
-        stop(
-          gettext("'prn' must be a numeric vector between 0 and 1")
-        )
-      }
-      prn <- split(prn, s)
-    } else {
-      prn <- vector("list", nlevels(s))
+    strata <- as.factor(strata)
+    check_inclusion_prob(x, n, strata)
+    if (length(x) != length(prn)) {
+      stop(
+        gettext("'x' and 'prn' must be the same length")
+      )
     }
-    samp <- Map(f, .inclusion_prob_list(x, n, s), n, prn)
-    pos <- if (nlevels(s) == 1L) list(seq_along(x)) else split(seq_along(x), s)
-    res <- unlist(Map(`[`, pos, samp), use.names = FALSE)
-    weights <- unlist(lapply(samp, weights), use.names = FALSE)
-    levels <- unlist(lapply(samp, levels), use.names = FALSE)
+    if (not_prob(prn)) {
+      stop(
+        gettext("'prn' must be a numeric vector between 0 and 1")
+      )
+    }
+    # the single-stratum case is common enough to warrant the optimization
+    if (nlevels(strata) == 1L) {
+      p <- .inclusion_prob(x, n)
+      res <- f(p, n, prn)
+      weights <- 1 / p[res]
+    } else {
+      p <- Map(.inclusion_prob, split(x, strata), n)
+      samp <- Map(f, p, n, split(prn, strata))
+      pos <- split(seq_along(x), strata)
+      res <- unlist(Map(`[`, pos, samp), use.names = FALSE)
+      weights <- 1 / unlist(Map(`[`, p, samp), use.names = FALSE)
+    }
     ord <- order(res)
+    levels <- rep("TA", length(res))
+    levels[weights > 1] <- "TS"
     structure(
       res[ord],
       weights = weights[ord],

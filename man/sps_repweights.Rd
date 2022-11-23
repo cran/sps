@@ -2,11 +2,11 @@
 \alias{sps_repweights}
 
 \title{
-Bootstrap replicate weights for Poisson sampling
+Bootstrap replicate weights for sequential Poisson sampling
 }
 
 \description{
-Produce bootstrap replicate weights that are appropriate for Poisson sampling, and therefore approximately correct for sequential Poisson sampling, using the generalized bootstrap method by Beaumont and Patak (2012).
+Produce bootstrap replicate weights that are appropriate for Poisson sampling, and therefore approximately correct for sequential Poisson sampling.
 }
 
 \usage{
@@ -14,7 +14,7 @@ sps_repweights(w, B = 1000, tau = 1, dist = NULL)
 }
 
 \arguments{
-\item{w}{A numeric vector of design weights for a (sequential) Poisson sample.}
+\item{w}{A numeric vector of design (inverse probability) weights for a (sequential) Poisson sample.}
 
 \item{B}{An integer that gives the number of bootstrap replicates (1,000 by default). Non-integers are truncated towards 0.}
 
@@ -24,13 +24,13 @@ sps_repweights(w, B = 1000, tau = 1, dist = NULL)
 }
 
 \details{
-The details of the method for generating bootstrap replicates are in sections 4 and 6 of Beaumont and Patak (2012). Briefly, their method involves finding a vector of adjustments \eqn{a} for each bootstrap replicate and calculating the replicate weights as \eqn{a w}{a * w}, where \eqn{w} is a vector of design weights (inverse of the inclusion probabilities). 
+The details of the method for generating bootstrap replicates are presented by Beaumont and Patak (2012, sections 4 and 6). Briefly, their method involves finding a vector of adjustments \eqn{a} for each bootstrap replicate and calculating the replicate weights as \eqn{a w}{a * w}, where \eqn{w} is a vector of design weights (inverse of the inclusion probabilities). 
 
 The default pseudo-population method randomly rounds \eqn{w} for each replicate to produce a collection of integer weights \eqn{w'} that are used to generate a random vector \eqn{b} from the binomial distribution. The vector of adjustments is then \eqn{a = 1 + b - w' / w}. Specifying a deviates-generating function for \code{dist} will use this function to make a random vector \eqn{d} that is used to make an adjustment \eqn{a = 1 + d \sqrt{1 - 1 / w}}{a = 1 + d * (1 - 1 / w)^0.5}.
 
 These adjustments can be rescaled by a value \eqn{\tau \geq 1}{\tau >= 1} to prevent negative replicate weights. With this rescaling, the adjustment becomes \eqn{(a + \tau - 1) / \tau}. If \eqn{\tau > 1} then the resulting bootstrap variance estimator should be multiplied by \eqn{\tau^2}.
 
-As an alternative to the bootstrap, Ohlsson (1998, equations 2.12 and 2.13) proposes an analytic estimator for the variance of the total \eqn{\hat Y = \sum wy}{Y = \sum y * w} under sequential Poisson sampling: \deqn{V(\hat Y) = \frac{n}{n - 1} \sum \left(1 - \frac{1}{w}\right) \left(wy - \frac{\hat Y}{n}\right)^2.}{V(Y) = n / (n - 1) \sum (1 - 1 / w) (w * y - Y / n)^2.} Replacing the left-most correction by \eqn{n / (m - 1)}, where \eqn{m} is the number of units in the sample, gives a similar estimator for regular Poisson sampling.
+As an alternative to the bootstrap, Ohlsson (1998, equations 2.12 and 2.13) proposes an analytic estimator for the variance of the total \eqn{\hat Y = \sum wy}{Y = \sum w * y} under sequential Poisson sampling: \deqn{V(\hat Y) = \frac{n}{n - 1} \sum \left(1 - \frac{1}{w}\right) \left(wy - \frac{\hat Y}{n}\right)^2.}{V(Y) = n / (n - 1) \sum (1 - 1 / w) (w * y - Y / n)^2.} Replacing the left-most correction by \eqn{n / (m - 1)}, where \eqn{m} is the number of units in the sample, gives a similar estimator for ordinary Poisson sampling.
 }
 
 \value{
@@ -52,9 +52,10 @@ Ohlsson, E. (1998). Sequential Poisson Sampling. \emph{Journal of Official Stati
 }
 
 \examples{
-x <- c(1:10, 100) # sizes in the population
+# Make a population with units of different size
+x <- c(1:10, 100)
 
-# Draw a sample
+# Draw a sequential Poisson sample
 (samp <- sps(x, 5))
 
 # Make some bootstrap replicates

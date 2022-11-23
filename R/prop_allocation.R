@@ -1,38 +1,8 @@
 #---- Internal helpers ----
-# Apportionment (rounding) methods
-largest_remainder <- function(p, n, initial) {
-  p <- p * (n / sum(p))
-  np <- floor(p)
-  res <- initial + np
-  remainder <- order(np - p)[seq_len(n - sum(np))]
-  res[remainder] <- res[remainder] + 1
-  res
-}
-
-highest_averages <- function(divisor) {
-  divisor <- switch(
-    divisor,
-    "D'Hondt" = function(x) x + 1,
-    "Webster" = function(x) x + 0.5,
-    "Imperiali" = function(x) x + 2,
-    "Huntington-Hill" = function(x) sqrt(x * (x + 1)),
-    "Danish" = function(x) x + 1 / 3,
-    "Adams" = function(x) x,
-    "Dean" = function(x) x * (x + 1) / (x + 0.5)
-  )
-  # return function
-  function(p, n, initial) {
-    while (n > 0) {
-      i <- which.max(p / divisor(initial))
-      initial[i] <- initial[i] + 1
-      n <- n - 1
-    }
-    initial
-  }
-}
-
 # Argument checking
 check_allocation <- function(x, N, s) {
+  # this is stricter than it needs to be, but is consistent with the rest
+  # of the API
   if (not_strict_positive_vector(x)) {
     stop(
       gettext("'x' must be a strictly positive and finite numeric vector")
@@ -48,77 +18,88 @@ check_allocation <- function(x, N, s) {
       gettext("sample size 'N' is greater than population size")
     )
   }
+  # needed for tabulate()
   if (length(x) != length(s)) {
     stop(
-      gettext("'x' and 's' must be the same length")
+      gettext("'x' and 'strata' must be the same length")
     )
   }
+  # missing strata means allocation and coverage are missing
   if (anyNA(s)) {
     stop(
-      gettext("'s' cannot contain NAs")
+      gettext("'strata' cannot contain NAs")
     )
   }
 }
 
-#---- Expected coverage ----
-expected_coverage <- function(x, N, s = gl(1, length(x))) {
-  N <- trunc(N)
-  s <- as.factor(s)
-  check_allocation(x, N, s)
+# Apportionment (rounding) method
+highest_averages <- function(d) {
+  d <- match.fun(d)
+  # return function
+  function(p, n, min, max) {
+    res <- as.vector(min) # strip attributes
+    n <- n - sum(res)
+    # the while condition could be n > sum(res), but the loop below always
+    # terminates after at most n steps, even if i is integer(0)
+    while (n > 0) {
+      i <- which.max(p / d(res) * (res < max))
+      res[i] <- res[i] + 1L
+      n <- n - 1L
+    }
+    res
+  }
+}
+
+coverage_prob <- function(x, N, s) {
   p <- split(log(1 - .inclusion_prob(x, N)), s)
-  sum(1 - vapply(p, function(x) exp(sum(x)), numeric(1L)))
+  1 - vapply(p, function(x) exp(sum(x)), numeric(1L))
+}
+
+#---- Expected coverage ----
+expected_coverage <- function(x, N, strata = gl(1, length(x))) {
+  N <- trunc(N)
+  strata <- as.factor(strata)
+  check_allocation(x, N, strata)
+  sum(coverage_prob(x, N, strata))
 }
 
 #---- Proportional allocation ----
 prop_allocation <- function(
-    x, N, s = gl(1, length(x)), initial = 0, 
-    method = c("Largest-remainder", "D'Hondt", "Webster", "Imperiali", 
-               "Huntington-Hill", "Danish", "Adams", "Dean")  
+    x, N, 
+    strata = gl(1, length(x)), 
+    initial = 0, 
+    divisor = function(a) a + 1
 ) {
   N <- trunc(N)
-  s <- as.factor(s)
-  check_allocation(x, N, s)
+  strata <- as.factor(strata)
+  check_allocation(x, N, strata)
   initial <- trunc(initial)
   if (not_positive_vector(initial)) {
     stop(
       gettext("'initial' must be a positive and finite numeric vector")
     )
   }
-  if (length(initial) == 1L) initial <- rep.int(initial, nlevels(s))
-  if (length(initial) != nlevels(s)) {
+  ns <- tabulate(strata, nbins = nlevels(strata))
+  if (length(initial) == 1L) {
+    initial <- pmin.int(ns, min(N %/% nlevels(strata), initial))
+  }
+  if (length(initial) != nlevels(strata)) {
     stop(
-      gettext("'initial' must have a single allocation size for each level in 's'")
+      gettext("'initial' must have a single allocation size for each level in 'strata'")
     )
   }
-  ns <- tabulate(s, nbins = nlevels(s))
   if (any(initial > ns)) {
     stop(
       gettext("'initial' must be smaller than the population size for each stratum")
     )
   }
-  N <- N - sum(initial)
-  if (N < 0) {
+  if (N < sum(initial)) {
     stop(
       gettext("initial allocation is larger than 'N'")
     )
   }
-  method <- match.arg(method)
-  apportionment <- if (method == "Largest-remainder") {
-    largest_remainder
-  } else {
-    highest_averages(method)
-  }
-  res <- initial
-  p <- vapply(split(x, s), sum, numeric(1L))
-  repeat {
-    res <- apportionment(p, N, res)
-    d <- pmax(res - ns, 0)
-    over <- which(as.logical(d))
-    if (length(over) == 0L) break
-    # redistribute sample units for those that cap out at the stratum size
-    res[over] <- ns[over]
-    p[over] <- 0  
-    N <- sum(d)
-  }
-  structure(res, names = levels(s))
+  p <- vapply(split(x, strata), sum, numeric(1L))
+  res <- highest_averages(divisor)(p, N, initial, ns)
+  names(res) <- levels(strata)
+  res
 }

@@ -96,22 +96,22 @@ Type 'q()' to quit R.
 > 
 > # Tests for permanent random numbers
 > set.seed(4321)
-> prn <- runif(10)
+> prn <- runif(11)
 > all.equal(
-+   sps(c(1:9, 100), 5, prn = prn), 
-+   sps(c(1:9, 100), 5, prn = prn)
++   sps(c(100, 1:9, 100), 5, prn = prn), 
++   sps(c(100, 1:9, 100), 5, prn = prn)
 + )
 [1] TRUE
 > set.seed(4321)
 > all.equal(
-+   sps(1:10, 5, prn = prn), 
-+   sps(1:10, 5)
++   sps(c(100, 1:9, 100), 5, prn = prn), 
++   sps(c(100, 1:9, 100), 5)
 + )
 [1] TRUE
 > set.seed(4321)
 > all.equal(
-+   ps(c(1:9, 100), 5, prn = prn), 
-+   ps(c(1:9, 100), 5)
++   ps(c(100, 1:9, 100), 5, prn = prn), 
++   ps(c(100, 1:9, 100), 5)
 + )
 [1] TRUE
 > 
@@ -151,17 +151,17 @@ Type 'q()' to quit R.
 > 
 > # Tests for error messages
 > try(sps(-1, 1))
-Error in check_inclusion_prob(x, n, s) : 
+Error in check_inclusion_prob(x, n, strata) : 
   'x' must be a strictly positive and finite numeric vector
 > try(sps(1, NA))
-Error in check_inclusion_prob(x, n, s) : 
+Error in check_inclusion_prob(x, n, strata) : 
   'n' must be a positive and finite numeric vector
 > try(sps(1:4, 2, c(1, 1, 2, 2)))
-Error in check_inclusion_prob(x, n, s) : 
-  'n' must have a single sample size for each level in 's'
+Error in check_inclusion_prob(x, n, strata) : 
+  'n' must have a single sample size for each level in 'strata'
 > try(sps(1:4, c(5, 2), c(1, 1, 2, 2)))
-Error in check_inclusion_prob(x, n, s) : 
-  sample size 'n' is greater than population size
+Error in check_inclusion_prob(x, n, strata) : 
+  sample size 'n' is greater than population size for some strata
 > try(sps(1:4, 2, prn = c(0.1, 0.1, 0.1, NA)))
 Error in sps(1:4, 2, prn = c(0.1, 0.1, 0.1, NA)) : 
   'prn' must be a numeric vector between 0 and 1
