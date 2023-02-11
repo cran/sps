@@ -1,11 +1,18 @@
-export(sps, ps, inclusion_prob, prop_allocation, expected_coverage, sps_repweights)
+export(
+  sps, ps, inclusion_prob, order_sampling, 
+  prop_allocation, expected_coverage, 
+  sps_repweights
+)
 
 S3method(weights, sps)
+S3method(levels, sps)
 S3method(print, sps)
-S3method(print, sps_brw)
 S3method(Ops, sps)
 S3method(Math, sps)
 S3method("[<-", sps)
 S3method("[[<-", sps)
 
 importFrom(stats, weights, runif, rbinom)
+importFrom(Rcpp, evalCpp)
+
+useDynLib(sps, .registration = TRUE)

@@ -1,47 +1,14 @@
 #---- Internal helpers ----
-# Argument checking
-check_allocation <- function(x, N, s) {
-  # this is stricter than it needs to be, but is consistent with the rest
-  # of the API
-  if (not_strict_positive_vector(x)) {
-    stop(
-      gettext("'x' must be a strictly positive and finite numeric vector")
-    )
-  }
-  if (not_positive_number(N)) {
-    stop(
-      gettext("'N' must be a positive and finite number")
-    )
-  }
-  if (N > length(x)) {
-    stop(
-      gettext("sample size 'N' is greater than population size")
-    )
-  }
-  # needed for tabulate()
-  if (length(x) != length(s)) {
-    stop(
-      gettext("'x' and 'strata' must be the same length")
-    )
-  }
-  # missing strata means allocation and coverage are missing
-  if (anyNA(s)) {
-    stop(
-      gettext("'strata' cannot contain NAs")
-    )
-  }
-}
-
 # Apportionment (rounding) method
-highest_averages <- function(d) {
+.highest_averages <- function(d) {
   d <- match.fun(d)
   # return function
   function(p, n, min, max) {
-    res <- as.vector(min) # strip attributes
+    res <- min
     n <- n - sum(res)
     # the while condition could be n > sum(res), but the loop below always
     # terminates after at most n steps, even if i is integer(0)
-    while (n > 0) {
+    while (n > 0L) {
       i <- which.max(p / d(res) * (res < max))
       res[i] <- res[i] + 1L
       n <- n - 1L
@@ -50,36 +17,79 @@ highest_averages <- function(d) {
   }
 }
 
-coverage_prob <- function(x, N, s) {
-  p <- split(log(1 - .inclusion_prob(x, N)), s)
-  1 - vapply(p, function(x) exp(sum(x)), numeric(1L))
-}
-
 #---- Expected coverage ----
-expected_coverage <- function(x, N, strata = gl(1, length(x))) {
-  N <- trunc(N)
+expected_coverage <- function(x, N, strata, alpha = 1e-4) {
+  x <- as.numeric(x)
+  if (.min(x) < 0) {
+    stop(gettext("'x' must be greater than or equal to 0"))
+  }
+  
+  N <- as.integer(N)
+  if (N < 0L) {
+    stop(gettext("'N' must be greater than or equal to 0"))
+  }
+  if (N > sum(x > 0)) {
+    stop(
+      gettext("sample size is greater than the number of units with non-zero sizes in the population")
+    )
+  }
+  
   strata <- as.factor(strata)
-  check_allocation(x, N, strata)
-  sum(coverage_prob(x, N, strata))
+  if (length(x) != length(strata)) {
+    stop(gettext("'x' and 'strata' must be the same length"))
+  }
+  if (anyNA(strata)) {
+    stop(gettext("'strata' cannot contain NAs"))
+  }
+  
+  alpha <- as.numeric(alpha)
+  if (alpha >= 1 || alpha < 0) {
+    stop(gettext("'alpha' must be in [0, 1)"))
+  }
+  
+  p <- split(log(1 - .inclusion_prob(x, N, alpha)), strata)
+  sum(1 - vapply(p, function(x) exp(sum(x)), numeric(1L)))
 }
 
 #---- Proportional allocation ----
 prop_allocation <- function(
-    x, N, 
-    strata = gl(1, length(x)), 
+    x, N, strata,
     initial = 0, 
-    divisor = function(a) a + 1
+    divisor = \(a) a + 1
 ) {
-  N <- trunc(N)
-  strata <- as.factor(strata)
-  check_allocation(x, N, strata)
-  initial <- trunc(initial)
-  if (not_positive_vector(initial)) {
+  x <- as.numeric(x)
+  if (.min(x) < 0) {
+    stop(gettext("'x' must be greater than or equal to 0"))
+  }
+  
+  N <- as.integer(N)
+  if (N < 0L) {
+    stop(gettext("'N' must be greater than or equal to 0"))
+  }
+  if (N > sum(x > 0)) {
     stop(
-      gettext("'initial' must be a positive and finite numeric vector")
+      gettext("sample size is greater than the number of units with non-zero sizes in the population")
     )
   }
-  ns <- tabulate(strata, nbins = nlevels(strata))
+  
+  strata <- as.factor(strata)
+  if (length(x) != length(strata)) {
+    stop(gettext("'x' and 'strata' must be the same length"))
+  }
+  if (nlevels(strata) < 1L) {
+    stop(gettext("cannot allocate to no strata"))
+  }
+  # missing strata means allocation and coverage are missing
+  if (anyNA(strata)) {
+    stop(gettext("'strata' cannot contain NAs"))
+  }
+  x <- split(x, strata)
+  ns <- vapply(x, function(x) sum(x > 0), integer(1L))
+  
+  initial <- as.integer(initial)
+  if (.min(initial) < 0L) {
+    stop(gettext("'initial' must be greater than or equal to 0"))
+  }
   if (length(initial) == 1L) {
     initial <- pmin.int(ns, min(N %/% nlevels(strata), initial))
   }
@@ -90,16 +100,15 @@ prop_allocation <- function(
   }
   if (any(initial > ns)) {
     stop(
-      gettext("'initial' must be smaller than the population size for each stratum")
+      gettext("'initial' must be smaller than the number of units with non-zero sizes in the population for each stratum")
     )
   }
   if (N < sum(initial)) {
-    stop(
-      gettext("initial allocation is larger than 'N'")
-    )
+    stop(gettext("initial allocation is larger than 'N'"))
   }
-  p <- vapply(split(x, strata), sum, numeric(1L))
-  res <- highest_averages(divisor)(p, N, initial, ns)
+  
+  p <- vapply(x, sum, numeric(1L))
+  res <- .highest_averages(divisor)(p, N, initial, ns)
   names(res) <- levels(strata)
   res
 }

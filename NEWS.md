@@ -1,3 +1,13 @@
+## Changes in version 0.4.0
+
+- Added a new argument `alpha` for calculating inclusion probabilities. It can be used to place units with inclusion probabilities close to 1 into the take-all stratum. This was implicitly 0 in previous versions, but the current default is 1e-4.
+
+- All functions can now accept size vectors with zeros.
+
+- `sps()` is now faster, especially for large populations.
+
+- Added a function factory to generate other order sampling methods.
+
 ## Changes in version 0.3.0
 
 This version has a number of non-backwards compatible changes to address undesirable behavior with some functions.
