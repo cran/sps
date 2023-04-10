@@ -1,3 +1,13 @@
+## Changes in version 0.5.0
+
+- `prop_allocation()` gets a new argument for breaking ties. The default now breaks ties according to the references; the old behavior can be had by setting `ties = "first"`.
+
+- Argument names for `prop_allocation()`, `expected_coverage()`, and `sps_repweights()` have changed to be either more descriptive, or consistent with the names for other functions.
+
+- Fixed a bug when calculating inclusion probabilities that could result in ties not breaking according to position (as documented) when `alpha > 0`.
+
+- Simplified the codebase.
+
 ## Changes in version 0.4.1
 
 - Added a new argument `alpha` for calculating inclusion probabilities. It can be used to place units with inclusion probabilities close to 1 into the take-all stratum. This was implicitly 0 in previous versions, but the current default is 1e-4.

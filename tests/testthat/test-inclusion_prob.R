@@ -1,6 +1,6 @@
 set.seed(14235)
 
-test_that("corner cases", {
+test_that("corner cases work as expected", {
   expect_equal(
     inclusion_prob(0, 0),
     0
@@ -31,9 +31,9 @@ test_that("corner cases", {
   )
 })
 
-test_that("argument checking", {
-  expect_error(inclusion_prob(-1:6, c(2, 2), gl(2, 3)))
-  expect_error(inclusion_prob(c(NA, 1:6), c(2, 2), gl(2, 3)))
+test_that("argument checking works", {
+  expect_error(inclusion_prob(-1:4, c(2, 2), gl(2, 3)))
+  expect_error(inclusion_prob(c(NA, 1:5), c(2, 2), gl(2, 3)))
   expect_error(inclusion_prob(numeric(0), c(2, 2), gl(2, 3)))
   expect_error(inclusion_prob(numeric(0), 0, factor(integer(0))))
   expect_error(inclusion_prob(c(0, 0, 1:4), c(2, 2), gl(2, 3)))
@@ -48,11 +48,11 @@ test_that("argument checking", {
   expect_error(inclusion_prob(1:6, c(2, 2), gl(2, 3), alpha = c(0, 1)))
   expect_error(inclusion_prob(1:6, c(2, 2), gl(2, 3), alpha = c(0, NA)))
   expect_error(inclusion_prob(1:6, c(2, 2), gl(2, 3), alpha = c(0, 0, 0)))
-  expect_error(inclusion_prob(1:6, c(2, 2), gl(2, 2), alpha = integer(0)))
+  expect_error(inclusion_prob(1:6, c(2, 2), gl(2, 3), alpha = integer(0)))
   expect_error(inclusion_prob(1:6, 2, alpha = c(0, 0)))
 })
 
-test_that("different rounds of TA removal", {
+test_that("inclusion probs are correct with different rounds of TA removal", {
   # no rounds
   x <- c(0:4, 10:8, 5:7, 0)
   expect_equal(inclusion_prob(x, 4), x / 55 * 4)
@@ -75,7 +75,7 @@ test_that("different rounds of TA removal", {
   )
 })
 
-test_that("compare with sampling::inclusionprobabilities()", {
+test_that("results agree with sampling::inclusionprobabilities()", {
   expect_equal(
     inclusion_prob(1:20, 12),
     c(1:16 / 136 * 8, rep(1, 4))
@@ -85,22 +85,40 @@ test_that("compare with sampling::inclusionprobabilities()", {
     inclusion_prob(0:20, 12),
     c(0:16 / 136 * 8, rep(1, 4))
   )
+  expect_equal(
+    inclusion_prob(c(1, 2, 5, 5, 5, 10, 4, 1), 6),
+    c(0.25, 0.5, 1, 1, 1, 1, 1, 0.25)
+  )
+  
+  # sampling::inclusionprob() != inclusion_prob() with this vector
+  # with the default alpha
+  x <- c(100, 25, 94, 23, 55, 6, 80, 65, 48, 76, 
+         31, 99, 45, 39, 28, 18, 54, 78, 4, 33)
+  expect_equal(
+    inclusion_prob(x, 10),
+    c(1, x[-1] / sum(x[-1]) * 9)
+  )
+  expect_equal(
+    inclusion_prob(x, 10, alpha = 0),
+    x / sum(x) * 10
+  )
 })
 
-test_that("add TAs with alpha", {
-  # add more TAs with alpha
+test_that("TAs are added with alpha", {
   x <- c(0, 4, 1, 4, 5)
+  expect_equal(
+    inclusion_prob(rep(x, 3), c(3, 3, 3), gl(3, 5), alpha = c(0.1, 0.15, 0.2)),
+    c(x[-5] / 9 * 2, 1, 
+      x[1] / 5, 1, x[3:4] / 5, 1, 
+      0, 1, 0, 1, 1)
+  )
   
+  # partial ordering doesn't break ties correctly
+  x <- c(1, 2, 2, 2, 3)
   expect_equal(
-    inclusion_prob(x, 3, alpha = 0.1),
-    c(x[-5] / 9 * 2, 1)
-  )
-  expect_equal(
-    inclusion_prob(x, 3, alpha = 0.15),
-    c(x[1] / 5, 1, x[3:4] / 5, 1)
-  )
-  expect_equal(
-    inclusion_prob(x, 3, alpha = 0.2),
-    c(0, 1, 0, 1, 1)
+    inclusion_prob(rep(x, 3), c(3, 3, 3), gl(3, 5), alpha = c(0.15, 0.5, 0.6)),
+    c(x[-5] / 7 * 2, 1,
+      0.2, 1, 0.4, 0.4, 1,
+      0, 1, 1, 0, 1)
   )
 })
