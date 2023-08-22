@@ -17,7 +17,7 @@ prop_allocation(
     ties = c("largest", "first")
 )
 
-expected_coverage(x, n, strata, alpha = 1e-3)
+expected_coverage(x, n, strata, alpha = 1e-3, cutoff = Inf)
 }
 
 \arguments{
@@ -34,6 +34,8 @@ expected_coverage(x, n, strata, alpha = 1e-3)
 \item{ties}{Either 'largest' to break ties in favor of the stratum with the largest size, or 'first' to break ties in favor of the ordering of \code{strata}.}
 
 \item{alpha}{A number between 0 and 1 such that units with inclusion probabilities greater than or equal to 1 - \code{alpha} are set to 1. The default is slightly larger than 0.}
+
+\item{cutoff}{A numeric cutoff such that units with \code{x >= cutoff} get an inclusion probability of 1. The default does not apply a cutoff.}
 }
 
 \details{

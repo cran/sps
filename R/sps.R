@@ -26,7 +26,12 @@ ps_ <- function(p, n, u) {
 stratify <- function(f) {
   f <- match.fun(f)
 
-  function(x, n, strata = gl(1, length(x)), prn = NULL, alpha = 1e-3) {
+  function(x,
+           n,
+           strata = gl(1, length(x)),
+           prn = NULL,
+           alpha = 1e-3,
+           cutoff = Inf) {
     x <- as.numeric(x)
     n <- as.integer(n)
     strata <- as_stratum(strata)
@@ -44,7 +49,7 @@ stratify <- function(f) {
       }
     }
 
-    p <- inclusion_prob_(x, n, strata, alpha)
+    p <- inclusion_prob_(x, n, strata, alpha, cutoff)
     samp <- Map(f, p, n, split(prn, strata))
     pos <- split(seq_along(prn), strata)
     # strata must have at least one level, so unlist won't return NULL
@@ -55,7 +60,7 @@ stratify <- function(f) {
     structure(
       res[ord],
       weights = weights[ord],
-      class = c("sps", class(res))
+      class = c("sps", "numeric")
     )
   }
 }
@@ -70,9 +75,18 @@ ps <- stratify(ps_)
 
 #---- Methods for class 'sps' ----
 levels.sps <- function(x) {
-  res <- rep_len("TS", length(x))
+  res <- rep.int("TS", length(x))
   res[weights(x) == 1] <- "TA"
   res
+}
+
+`levels<-.sps` <- function(x, value) {
+  stop("cannot replace levels attribute")
+}
+
+`length<-.sps` <- function(x, value) {
+  x <- as.vector(x)
+  NextMethod()
 }
 
 weights.sps <- function(object, ...) {

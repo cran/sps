@@ -16,12 +16,12 @@ Draw a stratified probability-proportional-to-size sample using the sequential a
 
 \usage{
 ## Sequential Poisson sampling
-sps(x, n, strata = gl(1, length(x)), prn = NULL, alpha = 1e-3)
+sps(x, n, strata = gl(1, length(x)), prn = NULL, alpha = 1e-3, cutoff = Inf)
 
 ## Ordinary Poisson sampling
-ps(x, n, strata = gl(1, length(x)), prn = NULL, alpha = 1e-3)
+ps(x, n, strata = gl(1, length(x)), prn = NULL, alpha = 1e-3, cutoff = Inf)
 
-inclusion_prob(x, n, strata = gl(1, length(x)), alpha = 1e-3)
+inclusion_prob(x, n, strata = gl(1, length(x)), alpha = 1e-3, cutoff = Inf)
 
 ## Function factory
 order_sampling(dist)
@@ -30,13 +30,15 @@ order_sampling(dist)
 \arguments{
 \item{x}{A positive and finite numeric vector of sizes for units in the population (e.g., revenue for drawing a sample of businesses).}
 
-\item{n}{A positive integer vector giving the sample size for each stratum, ordered according to the levels of \code{strata}. Non-integers are truncated towards 0.}
+\item{n}{A positive integer vector giving the sample size for each stratum, ordered according to the levels of \code{strata}. A single value is recycled for all strata. Non-integers are truncated towards 0.}
 
 \item{strata}{A factor, or something that can be coerced into one, giving the strata associated with units in the population. The default is to place all units into a single stratum.}
 
 \item{prn}{A numeric vector of permanent random numbers for units in the population, distributed uniform between 0 and 1. The default does not use permanent random numbers, instead generating a random vector when the function is called.}
 
 \item{alpha}{A numeric vector with values between 0 and 1 for each stratum, ordered according to the levels of \code{strata}. Units with inclusion probabilities greater than or equal to 1 - \code{alpha} are set to 1 for each stratum. A single value is recycled for all strata. The default is slightly larger than 0.}
+
+\item{cutoff}{A positive numeric vector of cutoffs for each stratum, ordered according to the levels of \code{strata}. Units with \code{x >= cutoff} get an inclusion probability of 1 for each stratum. A single value is recycled for all strata. The default does not apply a cutoff.}
 
 \item{dist}{A function that gives the inverse of the fixed distribution shape for an order sampling scheme. See details.}
 }
@@ -88,7 +90,7 @@ Rosén, B. (2000). On inclusion probabilities for order \eqn{\pi}ps sampling. \e
 
 The \code{UPpoisson} and \code{UPopips} functions in the \pkg{sampling} package for ordinary and sequential Poisson sampling, respectively. Note that the algorithm for order sampling in the \code{UPopips} function is currently incorrect, giving a worse approximation for the inclusion probabilities than it should.
 
-The \code{UP*} functions in the \pkg{sampling} package and the \pkg{pps} package for other probability-proportional-to-size sampling methods.
+The \code{UP*} functions in the \pkg{sampling} package, the \code{S.*} functions in the \pkg{TeachingSampling} package, and the \pkg{pps} package for other probability-proportional-to-size sampling methods.
 
 The \code{pps} function in the \pkg{prnsamplr} package for Pareto order sampling with permanent random numbers.
 }
@@ -106,6 +108,9 @@ weights(samp)
 
 # All units except 11 are in the take-some (TS) stratum
 levels(samp)
+
+# Ensure that the top 10\% of units are in the sample
+sps(x, 5, cutoff = quantile(x, 0.9))
 
 #---- Ordinary Poisson sampling ----
 # Ordinary Poisson sampling gives a random sample size for the 
@@ -144,17 +149,17 @@ all(samp \%in\% sps(x, 7, prn = u))
 #---- Other order-sampling methods ----
 # Generate new order-sampling functions from the parameters of
 # the inverse generalized Pareto distribution
-igpd <- function(a, b) {
-  if (b == 0) {
-    function(x) -a * log(1 - x)
+igpd <- function(shape, scale = 1, location = 0) {
+  if (shape == 0) {
+    function(x) -scale * log(1 - x) + location
   } else {
-    function(x) a * (1 - (1 - x)^b) / b
+    function(x) scale * (1 - (1 - x)^shape) / shape + location
   }
 }
 
-order_sampling2 <- function(a, b) order_sampling(igpd(a, b))
+order_sampling2 <- function(x) order_sampling(igpd(x))
 
-order_sampling2(1, 1)(x, 6, prn = u) # sequential Poisson
-order_sampling2(1, 0)(x, 6, prn = u) # successive
-order_sampling2(1, -1)(x, 6, prn = u) # Pareto
+order_sampling2(1)(x, 6, prn = u) # sequential Poisson
+order_sampling2(0)(x, 6, prn = u) # successive
+order_sampling2(-1)(x, 6, prn = u) # Pareto
 }

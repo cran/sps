@@ -53,11 +53,10 @@ test_that("argument checking works", {
   expect_error(sps(1:6, c(-2, 2), gl(2, 3)))
   expect_error(sps(1:6, c(NA, 2), gl(2, 3)))
   expect_error(sps(1:6, integer(0), gl(2, 3)))
-  expect_error(sps(1:6, 2, gl(2, 3)))
   expect_error(sps(1:6, c(2, 2)))
   expect_error(sps(1:6, c(2, 2), gl(2, 2)))
   expect_error(sps(1:6, c(2, 2), gl(2, 3)[c(1:5, 7)]))
-  expect_error(sps(1:6, c(2, 2), gl(2, 3), alpha = c(0, 1)))
+  expect_error(sps(1:6, c(2, 2), gl(2, 3), alpha = c(0, 1.5)))
   expect_error(sps(1:6, c(2, 2), gl(2, 3), alpha = c(0, NA)))
   expect_error(sps(1:6, c(2, 2), gl(2, 3), alpha = c(0, 0, 0)))
   expect_error(sps(1:6, c(2, 2), gl(2, 3), alpha = integer(0)))
@@ -67,6 +66,7 @@ test_that("argument checking works", {
   expect_error(sps(1:6, c(2, 2), gl(2, 3), prn = -1:4 / 10))
   expect_error(sps(1:6, c(2, 2), gl(2, 3), prn = c(NA, 1:5) / 10))
   expect_error(sps(1:6, c(2, 2), gl(2, 3), prn = numeric(0)))
+  expect_error(sps(1:6, c(2, 2), gl(2, 3), cutoff = 2))
 })
 
 test_that("results are sorted", {
@@ -194,6 +194,11 @@ test_that("ties are broken by position", {
   )
 })
 
+test_that("cutoff units are included", {
+  x <- c(4, 1, 3, 2, 4)
+  expect_true(all(c(1, 5) %in% sps(x, 3, cutoff = 4)))
+})
+
 test_that("attributes get removed", {
   samp <- sps(1:5, 3)
   # mathematical functions should treat 'sps' objects as numeric vectors
@@ -206,4 +211,7 @@ test_that("attributes get removed", {
   # and replacement methods
   expect_true(inherits(replace(samp, 1, 1), "numeric"))
   expect_true(inherits(replace(samp, 1, 1L), "integer"))
+
+  length(samp) <- 2
+  expect_true(inherits(samp, "integer"))
 })

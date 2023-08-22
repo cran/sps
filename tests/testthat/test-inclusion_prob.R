@@ -41,15 +41,19 @@ test_that("argument checking works", {
   expect_error(inclusion_prob(1:6, c(-2, 2), gl(2, 3)))
   expect_error(inclusion_prob(1:6, c(NA, 2), gl(2, 3)))
   expect_error(inclusion_prob(1:6, integer(0), gl(2, 3)))
-  expect_error(inclusion_prob(1:6, 2, gl(2, 3)))
   expect_error(inclusion_prob(1:6, c(2, 2)))
   expect_error(inclusion_prob(1:6, c(2, 2), gl(2, 2)))
   expect_error(inclusion_prob(1:6, c(2, 2), gl(2, 3)[c(1:5, 7)]))
-  expect_error(inclusion_prob(1:6, c(2, 2), gl(2, 3), alpha = c(0, 1)))
+  expect_error(inclusion_prob(1:6, c(2, 2), gl(2, 3), alpha = c(0, 1.5)))
   expect_error(inclusion_prob(1:6, c(2, 2), gl(2, 3), alpha = c(0, NA)))
   expect_error(inclusion_prob(1:6, c(2, 2), gl(2, 3), alpha = c(0, 0, 0)))
   expect_error(inclusion_prob(1:6, c(2, 2), gl(2, 3), alpha = integer(0)))
   expect_error(inclusion_prob(1:6, 2, alpha = c(0, 0)))
+  expect_error(inclusion_prob(1:6, 2, cutoff = 3))
+  expect_error(inclusion_prob(1:6, 2, cutoff = numeric(0)))
+  expect_error(inclusion_prob(1:6, 2, cutoff = 1:3))
+  expect_error(inclusion_prob(1:6, 2, cutoff = 0))
+  expect_error(inclusion_prob(1:6, 2, cutoff = NA))
 })
 
 test_that("inclusion probs are correct with different rounds of TA removal", {
@@ -89,10 +93,10 @@ test_that("results agree with sampling::inclusionprobabilities()", {
     inclusion_prob(c(1, 2, 5, 5, 5, 10, 4, 1), 6),
     c(0.25, 0.5, 1, 1, 1, 1, 1, 0.25)
   )
-  
+
   # sampling::inclusionprob() != inclusion_prob() with this vector
   # with the default alpha
-  x <- c(100, 25, 94, 23, 55, 6, 80, 65, 48, 76, 
+  x <- c(100, 25, 94, 23, 55, 6, 80, 65, 48, 76,
          31, 99, 45, 39, 28, 18, 54, 78, 4, 33)
   expect_equal(
     inclusion_prob(x, 10),
@@ -108,11 +112,11 @@ test_that("TAs are added with alpha", {
   x <- c(0, 4, 1, 4, 5)
   expect_equal(
     inclusion_prob(rep(x, 3), c(3, 3, 3), gl(3, 5), alpha = c(0.1, 0.15, 0.2)),
-    c(x[-5] / 9 * 2, 1, 
-      x[1] / 5, 1, x[3:4] / 5, 1, 
+    c(x[-5] / 9 * 2, 1,
+      x[1] / 5, 1, x[3:4] / 5, 1,
       0, 1, 0, 1, 1)
   )
-  
+
   # partial ordering doesn't break ties correctly
   x <- c(1, 2, 2, 2, 3)
   expect_equal(
@@ -121,4 +125,62 @@ test_that("TAs are added with alpha", {
       0.2, 1, 0.4, 0.4, 1,
       0, 1, 1, 0, 1)
   )
+
+  # alpha = 1 adds TA units in order
+  x <- c(4, 3, 4, 2, 1, 0)
+  expect_equal(
+    inclusion_prob(rep(x, 6), 0:5, gl(6, 6), 1),
+    c(0, 0, 0, 0, 0, 0,
+      1, 0, 0, 0, 0, 0,
+      1, 0, 1, 0, 0, 0,
+      1, 1, 1, 0, 0, 0,
+      1, 1, 1, 1, 0, 0,
+      1, 1, 1, 1, 1, 0)
+  )
+})
+
+test_that("inclusion probs are a fixed point", {
+  x <- 1:10
+  p <- inclusion_prob(x, 5)
+  expect_equal(p, inclusion_prob(p, 5))
+
+  x <- c(0, 4, 1, 4, 5)
+  p <- inclusion_prob(x, 3, alpha = 0.15)
+  expect_equal(p, inclusion_prob(p, 3))
+})
+
+test_that("n, alpha, and cutoff recycle", {
+  x <- 1:10
+  expect_equal(
+    inclusion_prob(x, 3, gl(2, 5)),
+    inclusion_prob(x, c(3, 3), gl(2, 5))
+  )
+  expect_equal(
+    inclusion_prob(x, 3, gl(2, 5), alpha = 0.5),
+    inclusion_prob(x, 3, gl(2, 5), alpha = c(0.5, 0.5))
+  )
+
+  x <- rep(1:5, 2)
+  expect_equal(
+    inclusion_prob(x, 3, gl(2, 5), cutoff = 4),
+    inclusion_prob(x, 3, gl(2, 5), cutoff = c(4, 4))
+  )
+})
+
+test_that("cutoff is the same as removing units", {
+  x <- 1:20
+  expect_equal(inclusion_prob(x[x < 18], 9),
+               inclusion_prob(x, 12, cutoff = 18)[1:17])
+  expect_equal(inclusion_prob(x[x < 18], 9, alpha = 0.1),
+               inclusion_prob(x, 12, cutoff = 18, alpha = 0.1)[1:17])
+})
+
+test_that("cutoff agrees with alpha", {
+  x <- c(0, 1, 2, 3, 2, 4, 3)
+  expect_equal(inclusion_prob(x, 3, alpha = 0.2),
+               inclusion_prob(x, 3, cutoff = 4))
+  expect_equal(inclusion_prob(x, 3, alpha = 0.625),
+               inclusion_prob(x, 3, cutoff = 3))
+  expect_equal(inclusion_prob(x, 3, alpha = 0.625, cutoff = 3),
+               inclusion_prob(x, 3, cutoff = 3))
 })
