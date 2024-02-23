@@ -1,4 +1,4 @@
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -94,13 +94,6 @@ sample_tu <- with(frame, sps(revenue, allocation + c(10, 0, 0), region, prn))
 all(sample %in% sample_tu)
 
 ## ----critical-----------------------------------------------------------------
-becomes_ta <- function(x, alpha = 1e-3) {
-  ord <- rev(order(x, decreasing = TRUE))
-  x <- x[ord]
-  res <- ceiling(cumsum(x) / x * (1 - alpha)) + length(x) - seq_along(x)
-  res[order(ord)]
-}
-
 Map(\(x) head(becomes_ta(x)), split(frame$revenue, frame$region))
 
 ## ----no_tu--------------------------------------------------------------------
@@ -124,4 +117,27 @@ sampling_distribution <- replicate(1000, {
 })
 
 summary(sampling_distribution / sum(sales) - 1)
+
+## ----tille, fig.width=8, fig.height=5.33--------------------------------------
+set.seed(123456)
+n <- 5e3
+frame1 <- subset(frame, region == 1)
+
+pi_est <- tabulate(
+  replicate(n, sps(frame1$revenue, allocation[1])),
+  nbins = nrow(frame1)
+) / n
+
+pi <- inclusion_prob(frame1$revenue, allocation[1])
+
+dist <- (pi_est - pi) / sqrt(pi * (1 - pi) / n)
+
+plot(
+  density(dist, na.rm = TRUE),
+  ylim = c(0, 0.5), xlim = c(-4, 4),
+  ylab = "", xlab = "",
+  main = "Empirical distribution of inclusion probabilities"
+)
+lines(seq(-4, 4, 0.1), dnorm(seq(-4, 4, 0.1)), lty = "dashed")
+legend("topright", c("empirical", "theoretical"), lty = c("solid", "dashed"))
 

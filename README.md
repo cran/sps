@@ -1,14 +1,22 @@
-Sequential Poisson Sampling
-================
 
 <!-- README.md is generated from README.Rmd. Please edit that file. -->
+
+# Sequential Poisson sampling <a href="https://marberts.github.io/sps/"><img src="man/figures/logo.png" align="right" height="139" alt="sps website" /></a>
+
+<!-- badges: start -->
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/sps)](https://cran.r-project.org/package=sps)
 [![sps status
 badge](https://marberts.r-universe.dev/badges/sps)](https://marberts.r-universe.dev)
+[![Conda
+Version](https://img.shields.io/conda/vn/conda-forge/r-sps.svg)](https://anaconda.org/conda-forge/r-sps)
 [![R-CMD-check](https://github.com/marberts/sps/workflows/R-CMD-check/badge.svg)](https://github.com/marberts/sps/actions)
-[![codecov](https://codecov.io/gh/marberts/sps/branch/master/graph/badge.svg?token=5CPGWUF267)](https://app.codecov.io/gh/marberts/sps)
+[![codecov](https://codecov.io/gh/marberts/sps/graph/badge.svg?token=5CPGWUF267)](https://app.codecov.io/gh/marberts/sps)
+[![DOI](https://zenodo.org/badge/326323827.svg)](https://zenodo.org/doi/10.5281/zenodo.10109857)
+[![Mentioned in Awesome Official
+Statistics](https://awesome.re/mentioned-badge.svg)](https://github.com/SNStatComp/awesome-official-statistics-software)
+<!-- badges: end -->
 
 Sequential Poisson sampling is a variation of Poisson sampling for
 drawing probability-proportional-to-size samples with a given number of
@@ -20,14 +28,22 @@ to the generalized bootstrap method by Beaumont and Patak (2012).
 
 ## Installation
 
+Get the stable release from CRAN.
+
 ``` r
 install.packages("sps")
 ```
 
-The development version can be found on GitHub.
+The development version can be installed from R-Universe
 
 ``` r
-pak::install_pkg("marberts/sps")
+install.packages("sps", repos = c("https://marberts.r-universe.dev", "https://cloud.r-project.org"))
+```
+
+or directly from GitHub.
+
+``` r
+pak::pak("marberts/sps")
 ```
 
 ## Usage
@@ -45,11 +61,11 @@ revenue <- c(1:10, 100, 150)
 
 # Draw a sample of 6 businesses
 (samp <- sps(revenue, 6))
-#> [1]  6  8  9 10 11 12
+#> [1]  4  8  9 10 11 12
 
 # Design weights and sampling strata are stored with the sample
 weights(samp)
-#> [1] 2.291667 1.718750 1.527778 1.375000 1.000000 1.000000
+#> [1] 3.437500 1.718750 1.527778 1.375000 1.000000 1.000000
 levels(samp)
 #> [1] "TS" "TS" "TS" "TS" "TA" "TA"
 ```
@@ -69,31 +85,34 @@ stratum <- rep(c("a", "b"), c(9, 3))
 
 # Draw a stratified sample
 (samp <- sps(revenue, allocation, stratum))
-#> [1]  2  4  8 10 11 12
+#> [1]  5  6  9 10 11 12
 
 weights(samp)
-#> [1] 7.500 3.750 1.875 1.000 1.000 1.000
+#> [1] 3.000000 2.500000 1.666667 1.000000 1.000000 1.000000
 levels(samp)
 #> [1] "TS" "TS" "TS" "TA" "TA" "TA"
 ```
 
 The design weights for a sample can then be used to generate bootstrap
-replicate weights with the `sps_repwights()` function.
+replicate weights with the `sps_repweights()` function.
 
 ``` r
 sps_repweights(weights(samp), 5, tau = 2)
-#>        [,1]  [,2]   [,3]    [,4]   [,5]
-#> [1,] 11.500 7.250 7.2500 15.2500 7.2500
-#> [2,]  3.625 3.625 5.5000  2.2500 2.2500
-#> [3,]  2.750 2.750 1.8125  2.3125 1.8125
-#> [4,]  1.000 1.000 1.0000  1.0000 1.0000
-#> [5,]  1.000 1.000 1.0000  1.0000 1.0000
-#> [6,]  1.000 1.000 1.0000  1.0000 1.0000
+#>           [,1] [,2]      [,3]     [,4]     [,5]
+#> [1,] 3.0000000 1.50 1.5000000 4.500000 1.500000
+#> [2,] 2.2500000 2.25 3.5000000 1.500000 1.500000
+#> [3,] 0.6666667 1.50 0.6666667 2.333333 2.333333
+#> [4,] 1.0000000 1.00 1.0000000 1.000000 1.000000
+#> [5,] 1.0000000 1.00 1.0000000 1.000000 1.000000
+#> [6,] 1.0000000 1.00 1.0000000 1.000000 1.000000
 #> attr(,"tau")
 #> [1] 2
 ```
 
-## Contribution
+The vignette gives more detail about how to use these functions to draw
+coordinated samples, top up a sample, and estimate variance.
+
+## Prior work
 
 There are a number of packages on CRAN for drawing samples proportional
 to size, but these generally do not include the sequential Poisson
