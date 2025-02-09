@@ -79,7 +79,7 @@ But in practice it's not possible to determine how far an estimate is from the t
 A general approach for estimating the variance of the Horvitz-Thompson estimator is to construct bootstrap replicate weights from the design weights for the sample, compute a collection of estimates for the total based on these replicate weights, and then compute the variance of this collection of estimates. 
 
 ```{r variance}
-repweights <- sps_repweights(weights(sample), tau = 2)
+repweights <- sps_repweights(weights(sample))
 
 var <- attr(repweights, "tau")^2 *
   mean((colSums(survey$sales * repweights) - ht)^2)
@@ -193,6 +193,9 @@ More generally, the distribution of inclusion probabilities
 is usually close to what is expected if sequential Poisson sampling was exactly proportional to size.^[See Tillé, Y. (2023). Remarks on some misconceptions about unequal probability sampling without replacement. *Computer Science Review*, 47, 100533.]
 
 ```{r tille, fig.width=8, fig.height=5.33}
+#| fig.alt: >
+#|   Empirical distribution of inclusion probabilities under sequential Poisson
+#|   sampling is approximately Guassian.
 set.seed(123456)
 n <- 5e3
 frame1 <- subset(frame, region == 1)

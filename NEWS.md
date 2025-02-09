@@ -1,3 +1,14 @@
+## Changes in version 0.6.0
+
+- `inclusion_prob()` is now faster with a single stratum, improving the performance
+of `sps()` and `expected_coverage()`.
+
+- By default, `sps_repweights()` automatically picks the smallest
+`tau` to keep the replicate weights from being negative. Inspired by
+`svrep::make_gen_boot_factors()`.
+
+- Now requires R >= 4.1, which has been the case for a while (closing #2).
+
 ## Changes in version 0.5.4
 
 - Added `becomes_ta()` to determine the sample size when a unit enter the

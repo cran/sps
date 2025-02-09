@@ -42,7 +42,7 @@ ht
 ht / sum(sales) - 1
 
 ## ----variance-----------------------------------------------------------------
-repweights <- sps_repweights(weights(sample), tau = 2)
+repweights <- sps_repweights(weights(sample))
 
 var <- attr(repweights, "tau")^2 *
   mean((colSums(survey$sales * repweights) - ht)^2)

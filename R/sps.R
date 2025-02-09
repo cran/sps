@@ -8,7 +8,7 @@ order_sampling_ <- function(f) {
     ts <- which(!ta & p > 0)
     ta <- which(ta)
     n_ts <- n - length(ta)
-    # sample the take somes
+    # Sample the take somes.
     keep <- if (n_ts > 0L) {
       xi <- f(u[ts]) / f(p[ts])
       order(xi)[seq_len(n_ts)]
@@ -23,6 +23,26 @@ ps_ <- function(p, n, u) {
   which(u < p)
 }
 
+#' Make random deviates
+#' @noRd
+random_deviates <- function(prn, x) {
+  if (is.null(prn)) {
+    prn <- stats::runif(length(x))
+  } else {
+    prn <- as.numeric(prn)
+    if (length(x) != length(prn)) {
+      stop(
+        "the vectors for sizes and permanent random numbers must be the ",
+        "same length"
+      )
+    }
+    if (any(prn <= 0) || any(prn >= 1)) {
+      stop("permanent random numbers must be in (0, 1)")
+    }
+  }
+  prn
+}
+
 #' Operator to stratify a sampling function
 #' @noRd
 stratify <- function(f) {
@@ -30,35 +50,29 @@ stratify <- function(f) {
 
   function(x,
            n,
-           strata = gl(1, length(x)),
+           strata = NULL,
            prn = NULL,
            alpha = 1e-3,
            cutoff = Inf) {
     x <- as.numeric(x)
     n <- as.integer(n)
-    strata <- as_stratum(strata)
     alpha <- as.numeric(alpha)
-    if (is.null(prn)) {
-      prn <- stats::runif(length(x))
-    } else {
-      prn <- as.numeric(prn)
-      if (length(x) != length(prn)) {
-        stop(
-          "the vectors for sizes and permanent random numbers must be the ",
-          "same length"
-        )
-      }
-      if (any(prn <= 0) || any(prn >= 1)) {
-        stop("permanent random numbers must be in (0, 1)")
-      }
-    }
+    cutoff <- as.numeric(cutoff)
+    prn <- random_deviates(prn, x)
 
-    p <- inclusion_prob_(x, n, strata, alpha, cutoff)
-    samp <- Map(f, p, n, split(prn, strata))
-    pos <- split(seq_along(prn), strata)
-    # strata must have at least one level, so unlist won't return NULL
-    res <- unlist(Map(`[`, pos, samp), use.names = FALSE)
-    weights <- 1 / unlist(Map(`[`, p, samp), use.names = FALSE)
+    if (!is.null(strata)) {
+      strata <- validate_strata(as.factor(strata), x)
+      p <- stratified_pi(x, n, strata, alpha, cutoff)
+      samp <- Map(f, p, n, split(prn, strata))
+      pos <- split(seq_along(prn), strata)
+      # Strata must have at least one level, so unlist won't return NULL.
+      res <- unlist(Map(`[`, pos, samp), use.names = FALSE)
+      weights <- 1 / unlist(Map(`[`, p, samp), use.names = FALSE)
+    } else {
+      p <- pi(x, n, alpha, cutoff)
+      res <- f(p, n, prn)
+      weights <- 1 / p[res]
+    }
 
     ord <- order(res)
     new_sps_sample(res[ord], weights[ord])
@@ -128,28 +142,28 @@ stratify <- function(f) {
 #' }
 #'
 #' @param x A positive and finite numeric vector of sizes for units in the
-#' population (e.g., revenue for drawing a sample of businesses).
+#'   population (e.g., revenue for drawing a sample of businesses).
 #' @param n A positive integer vector giving the sample size for each stratum,
-#' ordered according to the levels of `strata`. A single value is recycled
-#' for all strata. Non-integers are truncated towards 0.
+#'   ordered according to the levels of `strata`. A single value is recycled
+#'   for all strata. Non-integers are truncated towards 0.
 #' @param strata A factor, or something that can be coerced into one, giving
-#' the strata associated with units in the population. The default is to place
-#' all units into a single stratum.
+#'   the strata associated with units in the population. The default is to place
+#'   all units into a single stratum.
 #' @param prn A numeric vector of permanent random numbers for units in the
-#' population, distributed uniform between 0 and 1. The default does not use
-#' permanent random numbers, instead generating a random vector when the
-#' function is called.
+#'   population, distributed uniform between 0 and 1. The default does not use
+#'   permanent random numbers, instead generating a random vector when the
+#'   function is called.
 #' @param alpha A numeric vector with values between 0 and 1 for each stratum,
-#' ordered according to the levels of `strata`. Units with inclusion
-#' probabilities greater than or equal to 1 - `alpha` are set to 1 for
-#' each stratum. A single value is recycled for all strata. The default is
-#' slightly larger than 0.
+#'   ordered according to the levels of `strata`. Units with inclusion
+#'   probabilities greater than or equal to 1 - `alpha` are set to 1 for
+#'   each stratum. A single value is recycled for all strata. The default is
+#'   slightly larger than 0.
 #' @param cutoff A positive numeric vector of cutoffs for each stratum, ordered
-#' according to the levels of `strata`. Units with `x >= cutoff` get
-#' an inclusion probability of 1 for each stratum. A single value is recycled
-#' for all strata. The default does not apply a cutoff.
+#'   according to the levels of `strata`. Units with `x >= cutoff` get
+#'   an inclusion probability of 1 for each stratum. A single value is recycled
+#'   for all strata. The default does not apply a cutoff.
 #' @param dist A function giving the fixed order distribution shape for an order
-#' sampling scheme. See details.
+#'   sampling scheme. See details.
 #'
 #' @returns
 #' `sps()` and `ps()` return an object of class `sps_sample`.

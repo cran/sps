@@ -1,57 +1,3 @@
-#' Highest-averages apportionment method
-#' @noRd
-highest_averages <- function(p, n, initial, available, ties, dist) {
-  if (length(n) > 1L || n < 0L) {
-    stop("sample size must be an integer greater than or equal to 0")
-  }
-  if (length(p) != length(initial)) {
-    stop("initial allocation must have a single size for each stratum")
-  }
-  if (any(initial < 0)) {
-    stop("initial allocation must be greater than or equal to 0")
-  }
-  if (n < sum(initial)) {
-    stop("initial allocation cannot be larger than sample size")
-  }
-  if (length(available) != length(initial)) {
-    stop(
-      "number of available units in the population must be specified for ",
-      "each stratum"
-    )
-  }
-  if (n > sum(available)) {
-    stop(
-      "sample size cannot be greater than the number of available units in ",
-      "the population"
-    )
-  }
-  if (any(initial > available)) {
-    stop(
-      "initial allocation must be smaller than the number of available ",
-      "units in the population for each stratum"
-    )
-  }
-  dist <- match.fun(dist)
-
-  res <- initial
-  n <- n - sum(res)
-  ord <- switch(ties,
-    largest = order(p, decreasing = TRUE),
-    first = seq_along(p)
-  )
-  p <- p[ord]
-  res <- res[ord]
-  available <- available[ord]
-  # the while condition could be n > sum(res), but the loop below always
-  # terminates after at most n steps, even if i is integer(0)
-  while (n > 0L) {
-    i <- which.max(p / dist(res) * (res < available))
-    res[i] <- res[i] + 1L
-    n <- n - 1L
-  }
-  res[order(ord)]
-}
-
 #' Construct a proportional allocation
 #'
 #' Generate a proportional-to-size allocation for stratified sampling.
@@ -95,17 +41,17 @@ highest_averages <- function(p, n, initial, available, ties, dist) {
 #' @inheritParams sps
 #' @param n A positive integer giving the sample size.
 #' @param initial A positive integer vector giving the initial (or minimal)
-#' allocation for each stratum, ordered according to the levels of
-#' `strata`. A single integer is recycled for each stratum using a special
-#' algorithm to ensure a feasible allocation; see details. Non-integers are
-#' truncated towards 0. The default allows for no units to be allocated to a
-#' stratum.
+#'   allocation for each stratum, ordered according to the levels of
+#'   `strata`. A single integer is recycled for each stratum using a special
+#'   algorithm to ensure a feasible allocation; see details. Non-integers are
+#'   truncated towards 0. The default allows for no units to be allocated to a
+#'   stratum.
 #' @param divisor A divisor function for the divisor (highest-averages)
-#' apportionment method. The default uses the Jefferson (D'Hondt) method. See
-#' details for other possible functions.
+#'   apportionment method. The default uses the Jefferson (D'Hondt) method. See
+#'   details for other possible functions.
 #' @param ties Either 'largest' to break ties in favor of the stratum with the
-#' largest size, or 'first' to break ties in favor of the ordering of
-#' `strata`.
+#'   largest size, or 'first' to break ties in favor of the ordering of
+#'   `strata`.
 #'
 #' @returns
 #' A named integer vector of sample sizes for each stratum in `strata`.
@@ -142,15 +88,12 @@ prop_allocation <- function(x,
                             ties = c("largest", "first")) {
   x <- as.numeric(x)
   n <- as.integer(n)
-  strata <- as_stratum(strata)
+  strata <- validate_strata(as.factor(strata), x)
   initial <- as.integer(initial)
   ties <- tolower(as.character(ties))
 
   if (any(x < 0)) {
     stop("sizes must be greater than or equal to 0")
-  }
-  if (length(x) != length(strata)) {
-    stop("the vectors for sizes and strata must be the same length")
   }
 
   x <- split(x, strata)
@@ -164,4 +107,59 @@ prop_allocation <- function(x,
   res <- highest_averages(p, n, initial, ns, match.arg(ties), divisor)
   names(res) <- levels(strata)
   res
+}
+
+#' Highest-averages apportionment method
+#' @noRd
+highest_averages <- function(p, n, initial, available, ties, dist) {
+  if (n < 0L) {
+    stop("sample size must be greater than or equal to 0")
+  }
+  if (length(p) != length(initial)) {
+    stop("initial allocation must have a single size for each stratum")
+  }
+  if (any(initial < 0)) {
+    stop("initial allocation must be greater than or equal to 0")
+  }
+  if (n < sum(initial)) {
+    stop("initial allocation cannot be larger than the sample size")
+  }
+  if (length(available) != length(initial)) {
+    stop(
+      "number of available units in the population must be specified for ",
+      "each stratum"
+    )
+  }
+  if (n > sum(available)) {
+    stop(
+      "sample size cannot be greater than the number of available units in ",
+      "the population"
+    )
+  }
+  if (any(initial > available)) {
+    stop(
+      "initial allocation must be smaller than the number of available ",
+      "units in the population for each stratum"
+    )
+  }
+  dist <- match.fun(dist)
+
+  res <- initial
+  n <- n - sum(res)
+  ord <- switch(
+    ties,
+    largest = order(p, decreasing = TRUE),
+    first = seq_along(p)
+  )
+  p <- p[ord]
+  res <- res[ord]
+  available <- available[ord]
+  # The while condition could be n > sum(res), but the loop below always
+  # terminates after at most n steps, even if i is integer(0).
+  while (n > 0L) {
+    i <- which.max(p / dist(res) * (res < available))
+    res[i] <- res[i] + 1L
+    n <- n - 1L
+  }
+  res[order(ord)]
 }
