@@ -11,7 +11,7 @@ order_sampling_ <- function(f) {
     # Sample the take somes.
     keep <- if (n_ts > 0L) {
       xi <- f(u[ts]) / f(p[ts])
-      order(xi)[seq_len(n_ts)]
+      topn(xi, n_ts, decreasing = FALSE)
     }
     c(ta, ts[keep])
   }
@@ -179,6 +179,10 @@ stratify <- function(f) {
 #'
 #' `order_sampling` returns a function the with the same interface as
 #' `sps()` and `ps()`.
+#'
+#' @note
+#' [`kit::topn()`] is used if available to improve performance in the normal
+#' case when the sample size is small relative to the population.
 #'
 #' @seealso
 #' [prop_allocation()] for generating proportional-to-size allocations.

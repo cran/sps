@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Take-all units</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Take-all units</h1>
+
+
+
+<p>When drawing a sample of size <span class="math inline">\(n\)</span>
+from a population of size <span class="math inline">\(N\)</span>, where
+each unit is drawn proportional to some measure of size <span class="math inline">\(x_{i}\)</span>, <span class="math inline">\(i=1,\ldots,N\)</span>, the probability that the
+<span class="math inline">\(i\)</span>th unit is included in the sample
+is</p>
+<p><span class="math display">\[
+\pi_{i} = n x_{i} / \sum_{i=1}^{N} x_{i}.
+\]</span></p>
+<p>In theory these inclusion probabilities should be less than 1; in
+practice units with a large <span class="math inline">\(x_{i}\)</span>
+can have an inclusion probability greater than 1, especially when <span class="math inline">\(n\)</span> is large. The usual procedure to deal
+with these units is to put them in a special take-all stratum so that
+they are always included in the sample, essentially fixing their
+inclusion probabilities at 1, with the remaining units (the take-some
+units) drawn at random. The usual algorithm used by, say,
+<code>sampling::inclusionprobabilities()</code> repeatedly moves units
+into the take-all stratum and recalculates the inclusion probabilities
+for the remaining units until all inclusion probabilities are less than
+1.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<p>Sequential poisson sampling is a bit more complicated because it can
+be useful to place units with an inclusion probability greater than
+<span class="math inline">\(1 - \alpha\)</span>, for some small <span class="math inline">\(\alpha\)</span>, into the take-all stratum. Unless
+<span class="math inline">\(\alpha = 0\)</span>, the usual algorithm for
+finding take-all units can put units into the take-all stratum that have
+an inclusion probability less than <span class="math inline">\(1 -
+\alpha\)</span>. We can see this with the following example (with a
+larger value for <span class="math inline">\(\alpha\)</span>).</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>pi <span class="ot">&lt;-</span> <span class="cf">function</span>(x, n) {</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>  n <span class="sc">*</span> (x <span class="sc">/</span> <span class="fu">sum</span>(x))</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>}</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="co"># Population with 13 units.</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>, <span class="fl">9.5</span>, <span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">20</span>, <span class="dv">30</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>alpha <span class="ot">&lt;-</span> <span class="fl">0.15</span></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="co"># Units 11, 12, and 13 have an inclusion probability</span></span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="co"># greater than 1 - alpha.</span></span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="fu">which</span>(<span class="fu">pi</span>(x, <span class="dv">8</span>) <span class="sc">&gt;=</span> <span class="dv">1</span> <span class="sc">-</span> alpha)</span></code></pre></div>
+<pre><code>## [1] 11 12 13</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co"># Now units 9 and 10 have an inclusion probability</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="co"># greater than 1 - alpha.</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="fu">which</span>(<span class="fu">pi</span>(x[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>], <span class="dv">5</span>) <span class="sc">&gt;=</span> <span class="dv">1</span> <span class="sc">-</span> alpha)</span></code></pre></div>
+<pre><code>## [1]  9 10</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># After two rounds of removal all inclusion probabilities</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="co"># are less than 1 - alpha.</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="fu">any</span>(<span class="fu">pi</span>(x[<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>], <span class="dv">3</span>) <span class="sc">&gt;=</span> <span class="dv">1</span> <span class="sc">-</span> alpha)</span></code></pre></div>
+<pre><code>## [1] FALSE</code></pre>
+<p>Although all inclusion probabilities are less than <span class="math inline">\(1 - \alpha\)</span> after two round of placing
+units into a take-all stratum, the inclusion probability for unit 9
+would also be less than <span class="math inline">\(1 - \alpha\)</span>
+despite it being in the take-all stratum.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">pi</span>(x[<span class="dv">1</span><span class="sc">:</span><span class="dv">9</span>], <span class="dv">4</span>)[<span class="dv">9</span>] <span class="sc">&gt;=</span> <span class="dv">1</span> <span class="sc">-</span> alpha</span></code></pre></div>
+<pre><code>## [1] FALSE</code></pre>
+<p>This means that units have to be considered one at a time, from
+largest to smallest, to determine if they belong in the take-all
+stratum. Rather than doing this as a loop and potentially calculating
+the inclusion probabilities many times for most units, we can calculate
+a sequence of inclusion probabilities for the <span class="math inline">\(n\)</span> units with the largest sizes</p>
+<p><span class="math display">\[
+p_{i} = \frac{x_i i}{\bar{x} + \sum_{j=1}^{i} x_j},
+\]</span></p>
+<p>where <span class="math inline">\(\bar{x}\)</span> is the total size
+for all remaining units (those always in the take-some stratum) in the
+population. If units are sorted in increasing order of size, then the
+<span class="math inline">\(i\)</span>th element of this sequence gives
+the largest inclusion probability after putting the <span class="math inline">\(n - i\)</span> largest units in the take-all
+stratum.</p>
+<p>Finding the take-all units is now simply a case of finding the
+smallest integer <span class="math inline">\(i^{*}\)</span> (if one
+exists, for otherwise there are no take-all units) such that <span class="math inline">\(p_{i^{*}} \geq 1 - \alpha\)</span>. Although the
+sequence given by <span class="math inline">\(p_{1}, \ldots,
+p_{n}\)</span> is not increasing, it is monotonic enough to get a unique
+set of take-all units. To see this, write the <span class="math inline">\(i+1\)</span>th element of this sequence as</p>
+<p><span class="math display">\[
+\begin{align*}
+p_{i+1} &amp;= \frac{x_{i+1} (i + 1)}{\bar{x} + \sum_{j=1}^{i+1} x_j} \\
+&amp;= \frac{x_{i+1} (i + 1)}{x_{i} i / p_{i} + x_{i+1}}.
+\end{align*}
+\]</span></p>
+<p>It is straightforward to verify that</p>
+<p><span class="math display">\[
+p_{i+1} &gt; p_{i} \Leftrightarrow p_{i} &lt; \frac{x_{i+1} -
+x_{i}}{x_{i+1}} i + 1
+\]</span></p>
+<p>and</p>
+<p><span class="math display">\[
+p_{i+1} \geq 1 \Leftrightarrow p_{i} \geq x_{i} / x_{i+1}.
+\]</span></p>
+<p>This means that <span class="math inline">\(p_{i+1}&gt;p_{i}\)</span>
+if <span class="math inline">\(p_{i} &lt; 1\)</span> and <span class="math inline">\(p_{i+1}\geq 1\)</span> if <span class="math inline">\(p_{i}\geq 1\)</span>—the sequence is strictly
+increasing whenever it is less than 1 and does not drop below 1 after
+reaching this point. Therefore if <span class="math inline">\(p_{i^{*}}
+\geq 1- \alpha\)</span> then all units <span class="math inline">\(i
+&gt; i^{*}\)</span> have <span class="math inline">\(p_{i} \geq 1-
+\alpha\)</span>.</p>
+<p>Returning to the previous example, we can correctly find the four
+take-all units from the elements of <span class="math inline">\(p_{i}\)</span> that are greater than <span class="math inline">\(1 - \alpha\)</span>.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="cf">function</span>(x, n) {</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  ord <span class="ot">&lt;-</span> <span class="fu">order</span>(x, <span class="at">decreasing =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>  s <span class="ot">&lt;-</span> <span class="fu">seq_len</span>(n)</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>  possible_ta <span class="ot">&lt;-</span> <span class="fu">rev</span>(ord[s])</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>  x_ta <span class="ot">&lt;-</span> x[possible_ta] <span class="co"># ties are in reverse</span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>  definite_ts <span class="ot">&lt;-</span> ord[<span class="fu">seq.int</span>(n <span class="sc">+</span> <span class="dv">1</span>, <span class="at">length.out =</span> <span class="fu">length</span>(x) <span class="sc">-</span> n)]</span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>  x_ta <span class="sc">*</span> s <span class="sc">/</span> (<span class="fu">sum</span>(x[definite_ts]) <span class="sc">+</span> <span class="fu">cumsum</span>(x_ta))</span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>}</span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="fu">plot</span>(</span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a>  <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>,</span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a>  <span class="fu">p</span>(x, <span class="dv">8</span>)[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>],</span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">&quot;&quot;</span>,</span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a>  <span class="at">ylab =</span> <span class="st">&quot;p&quot;</span>,</span>
+<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a>  <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">8</span>),</span>
+<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a>  <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">2</span>),</span>
+<span id="cb9-18"><a href="#cb9-18" tabindex="-1"></a>  <span class="at">pch =</span> <span class="dv">20</span></span>
+<span id="cb9-19"><a href="#cb9-19" tabindex="-1"></a>)</span>
+<span id="cb9-20"><a href="#cb9-20" tabindex="-1"></a><span class="fu">points</span>(<span class="dv">5</span><span class="sc">:</span><span class="dv">8</span>, <span class="fu">p</span>(x, <span class="dv">8</span>)[<span class="dv">5</span><span class="sc">:</span><span class="dv">8</span>], <span class="at">pch =</span> <span class="dv">19</span>)</span>
+<span id="cb9-21"><a href="#cb9-21" tabindex="-1"></a><span class="fu">abline</span>(<span class="dv">1</span> <span class="sc">-</span> alpha, <span class="dv">0</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span>
+<span id="cb9-22"><a href="#cb9-22" tabindex="-1"></a><span class="fu">legend</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="fu">c</span>(<span class="st">&quot;take-some&quot;</span>, <span class="st">&quot;take-all&quot;</span>), <span class="at">pch =</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">19</span>))</span></code></pre></div>
+<p><img role="img" aria-label="Diagram showing how to find units that belong in the take-all stratum." src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAwAAAAH/CAIAAABvuC08AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAgAElEQVR4nO3dd0CU9R/A8e9zx95DBXGB4BYHKu6Be2uulHIjZcOVI1NT05bWz8y99yqzzBxZ7pmGuRUVFRVEVJQhCNz4/YESORGQ5+D7fv3lfQ+e+3DC8eZ5nrtTjEajAAAAkIlG7QEAAAByGwEEAACkQwABAADpEEAAAEA6BBAAAJAOAQQAAKRDAAEAAOkQQAAAQDoEEAAAkA4BBAAApEMAAQAA6RBAAABAOgQQAACQDgEEAACkQwABAADpEEAAAEA6BBAAAJAOAQQAAKRDAAEAAOkQQAAAQDoEEAAAkA4BBAAApEMAAQAA6RBAAABAOgQQAACQDgEEAACkQwABAADpEEAAAEA6BBAAAJAOAQQAAKRDAAEAAOkQQAAAQDoEEAAAkA4BBAAApEMAAQAA6RBAAABAOgQQAACQDgEEAACkQwABAADpEEAAAEA6BBAAAJAOAQQAAKRDAAEAAOkQQAAAQDoEEAAAkA4BBAAApEMAAQAA6RBAAABAOgQQAACQDgEEAACkQwABAADpEEAAAEA6BBAAAJAOAQQAAKRDAAEAAOkQQAAAQDoEEAAAkA4BBAAApEMAAQAA6RBAAABAOgQQAACQDgEEAACkQwABAADpEEAAAEA6BBAAAJAOAQQAAKRDAAEAAOkQQAAAQDoEEAAAkA4BBAAApEMAAQAA6RBAAABAOgQQAACQDgEEAACkQwABAADpEEAAAEA6BBAAAJCOmdoD5J6PPvpoz549ak8BAAAesba2Xr9+vZubW+7ftEQBdPDgwQ8++MDX11ftQQAAgBBC9OjR49atWwSQEMKYmhgfn5CkM7O2d3CwzunpypYtW61atRzeKAAAyBJra2u1btpEzgF6eG3HzKFd6pZxt7exc3R1c3dzdbK1dSxWpUW/z9aevGdQezwAAJCvmMIeoKR/prRs+slRmxptOgzoWN6rsLOdhUb3MO5ORNipg9tm9a61aseaPfM6uJtIqwEAgDxP/QAy3lr36een/aYc/mVYJdunrv1yysGxLVqM+LZ/66m1zFWYDgAA5EPq71bRXTp1Vle3V79n1I8QQnGuFdSjStSZs7HG3B4MAADkV+oHkLZI8aLGU3sPxjy7cAxRB/ZftC1SxF7J5bkAAEC+pf4hME2JwGHdp3Xt5n+9b3CPZv7lvQq72Fko+uT4OxFhpw5uXj5v9Unv8XsbWao9JwAAyDfUDyChFOwwZ/dG7zET507sNyvRkGFHkGLhWr5pr7l7xveqTP8AAIAcYwIBJISw9Gw1ZlWrT5Jjwi9cuBp1PyFZb27tWLCYT2lvdzut2sMBAID8xjQCKI1i6eLpW8vziVdqNqQkPdRpLGwsTWlUAACQl5l8VaTuG162yTyfGVf+HOjxsvOgb926tXHjxudde+3atbi4uOxPtH///rNnz2Z/O1AUJTAw0Nb2mc//AwDgNTL5ANIUrt29f6pbOZtMfOzdu3dDQkKed+3t27fPnTvXvHnzbE706aef2traenh4ZHM7+O2330qVKtWoUSO1BwEASMfkA0hbusfX83pk7mPLly8/b9685127evXqnNrZMGzYsICAgBzZlMwaN25sNPL6TgAAFaj/OkDpDInR167dTtQ/uZ4Sdzv6fhLvBwYAAHKKSQSQ/uYfE9uWcXF0L1HCzaV4vfdXnEv898qUPwaXLd55aRR7CgAAQA4xgQDSh815u8vkowV6fL1i/arpQ+smrO4XELj06lN7ggAAAHKG+ucA6S+tX3HQtf/GLbObOypCdO7Ru/XIes2Hvbc44LcBJUygzwAAQL6jfmEYbkfd1lZtVNfx0ZPcFYf6E2a9575zwphfbnPYCwAAvAbqB5C2cNHC+uP7D8f/u2Rbb9yMAXbrBw/+MZJznwEAQI5TP4A0Xp16NoiZF9jqvWlrtx8NTzAKIRSnJl8uHlbw137Nen235fw9TgcCAAA5Sf0AEhqv4BU/f1bn7uoRga27Tz+hS1u1q/v59i2feB8e13nExlgOhQEAYAoMBsP+/fuXLFmybdu2+Pj4l3+CqVL/JGghhKZQo9E/nxseG3H1luKRPpFSoMEnv4a+f/HAjoPnRBWHl70PBgAAeK1CQ0N79ux59OjRtItFihSZMWPGG2+8oe5UWWMSAZTG3LFIKccnF7WOpRp0KtVAjXkAAEC65OTkdu3aXbx4MX0lIiKiU6dOJ0+e9PX1fcEnmiYTOAQGAABM3p9//pmxftItWLAg94fJPgLIlBhTHyYmpb7kmW+649+/2fKjjXc4MQoAkIvCwsKeuf7MKjJ9BJAJ0Yd+26BA9YnHdS/8KOP9i4f2Ho9MyaWhAAAQQghnZ+dnrru4uOTyJDmCAAIAAC/XvHnzZ67n0ZOgCaDX5caNG5MnTx41atS+ffsy+Smd+ywITQlf+U7zwFmndEI8vPrHzJF9O7du3qLdmwM/W3Us5hnHxgxRWz7p2LTrpF13046IPby6/fuPenZo3bZr0JgF+yKeu5soOXzHrI8H9OjQpmPgwE+XHrmTvmn93ZCVE9/p1qZlmy5BYxYdiEpNWzbGbhnVqv/iowem92lev0Gz9r3Hrj2TYIgNWTLi7Xat2vUY9N3OiNTHm8jsDACAvMTNzW3JkiVPLPbq1atz586qzJNNBNBrceHChWLFio0bN27KlCkNGjSYP39+Zj6r15s1C2qd/ToPCKxTWLmxvEfN1uO23XevXLOap/HIjD6NOs24+N+XhDTe2zOmfY/ZUbUHf9jIVREi+fT0tjXaTPgzoWiFsk7XfxzaxL/rwovPOJ5mjPqhT51W47bGFKhQ1Vt7fEFw43ZTT+uEEMY7Wz6sW6/f3OOakr4+1qEr3g+o1WddhEEIIVJvntz909iO3ZYkVm3ZrGzS7qlvt2jZMqDH4nvetas7XVw5vEOv+VcMIvMzAADynj59+pw/f37QoEEtW7bs16/f5s2bly1bpih584VqjNKws7NbsGBB9rcTEBCwc+fOF3/MwIEDM97JRYsWzcyWdee+rGFdfkxIqtFoiF7U2s75jRXRBqPRaDQaYlZ2tLNqv+K+0WhM2fVBMevGs2/EhUwJKGDr++G2W2kfo78+v4W9be3Pjyelfcq9P97zMS/QY32M4YmbMcQsa2dt1WLBo8+L2zykZtW3l17TG1OOji5n7th81qWUtHFuLO9UyNzzg11JRqPh9sKWltpi/TalbS12Q6CrxqLy2L+TjEajUXdhSi0L+x4bEjM/Q6bvSQBAPlapUqUTJ06octPsAXotIiMjM168ceOGTvdKu0GUgv02x8dseLugIoQwPowOvRitE3qd/tFTv4wPz80PbDd6j1m3L79oUUgRQgjj3T9+2atv/O67lazStuAU8H4f3/h9u546p1qxdnW11Z3asOj30HupQti3nnb42IrexTT6S9u3h9m3HdjL21wIIYS2SLcPurpH7th+Om0Lim29tk2cFSGEsCnh5W5eonnbylZCCKEt7l3CLPXhQ33mZwAAQFUm9EKI+Um9evU2btyYfrF+/fpmZq94Vxtijq2aNvOH3cfOXrh0LdbKxUYv6qRfmXpo5tQyzRuV3PnjlIUftxxSWiuE/sbla6mpNyc0qDT18b5I3b2rqfe87+qM0ZuGvj3jRKoQQljU/WTD5BYTFgwOHzy5TblxtkUr123a9q0PBgf6ueijIqJEkTZeVuk3Y+7l46msirj56MibuZWV9tE1iiIUW3vb9L2eafs/XzCDEOav9vUDAPAaEUCvxeDBg0NCQtauXSuEqFix4sKFC19xA7rTU9s0nHi36YiPPx9d07ecT6G/3i/WKSr9ao1H5/lbV7U6GVyl8xej1765/q3CitCaaTUujYZM/7Byxv9UTYFyFopN6SbdupfTCyGE1tPTQpiV6PjNznbjw0P27Ni1Y+sPc/rV/eX8nr/GW1pbiQfxCf++wJAxNTVVWFhYZPro7vNneMWvHwCA14oAei3Mzc3XrFnz3XffxcfHlyxZUqN5xUONhqvbNv5j2W396oltrYUQQsTFxj7M8MqHZmUaNy5h4Vr8s/HNfx047rM/2s1u7uBVsZxN3E3Fu35Dz7RbSzm1fOz86Bbj61Wwq9guqGL6J+vPrvhoxuWGn4xr79+2n3/bfh806ePVZfvO8AlBlSpYzDywL0xft6xWCCEMkTv/OK2Uf6tcZr9LzF4ww6vdAQAAvFacA/Qaubm5+fj4vFr9GJMeJBqE4uDqYpZwcn9IjEEYk27sntZv7KYHhqTEpP++/LOmeO+vR1SLWjLym2PJwr5FcM8ihyb1/+y3s3eSdXGhG0b0/WDeCW0R5yf33yi2sf8s+2L05PVn7iYbUmNO/7z+YKx9qdLuZq7tgrsVOvbNOxO2hsUlx4fvnDpg4i6btsFdimX6C8j0DAAAqIoAMiGawhUquFyb0cK98uhLHcd/1jRmekN3Byd7p/LvHakzcXRDi93Da/Rad/c/DWRecdDUdz3Pfjdi/iW9XcCXG2a2iP6uY8VC1hZO5d762WHgqjWDymqfupkSfb/5qtXDld0rFrQxtypQKegPj8HLpnZ0FIpz6/+tn9Lg5rS2pZxsHL2aTgytMuGHOd3dX6FeMjsDAACqUoxGWd5Tyt7eftq0aUFBQdncTuPGjceNGxcQEJAjU8mMexIAJFe5cuUVK1ZUqlQp92+aPUAAAEA6BBAAAJAOAQQAAKRDAAEAAOkQQAAAQDoEEAAAkA4BBAAApEMAmRDD1aW9670557z+hR+VuvvD4jZN5kS+ltdvMtyY1di66Hs7U574NwAA+QrvBfa6HDhwYNeuXfHx8X5+fp07d87Mu8EbH0adO3a6WKIsL00JAIBaCKCcl5qa2r9//xUrVqSvVKxYcdOmTZ6eni/+xG9n74jU3d43f/L0N/p92KK4Rnfn5PbNe05HJGidS1Zv0aZBSbun35QiJey32atPODQd2Le2iyKESI0+vnXTrvP3LDwqNWnXtKzjc3fxZWbjAADkUxwCy3nTpk3LWD9CiNOnT/fq1eulnxh9Jz7VqEu4e+t2XIrxweFJDUr7dfl43s9bNy2d3K9xhWrvbbn7xL4h/Y0NA1t3+/qQU82qLooQxjs7P2lQtkaPsYt+XDt9SHvf0k0/P3T/mbuTMrNxAADyLwIo561aterpxX379oWHh7/4E7/+tGMJ88KtRs+Y3NUn4depU475fHro8ulD+w6euhLypV/4iiU7HmT4aMOdP0e06/2L29iN696rYCWEiN8+pu83kc0Xn7hy+ujfoZcPfl7x+Gf9Pj/88Okbin3pxgEAyNcIoJwXGRn5zPWIiIjMb8Sy4YTt+9cOqWQthBDC3K2Yu4U+KTHl8V4aY+yhyR27fn+z7dyfRvvbK0IIkfDHsh9u1Rr61Vs+VkIIxcFvyKR+xa9s2nhS96obBwAgv+McoJzn4eFx586dp9eLFCmS+Y1YeVT0Tdy54X9Ljp0NvRB6JiTkXLyxdfq1qUc+7xPi4GB398DWv+51aeuiCKG/cvrcA23qrqmDwx5X7YNTD3U3wiP0xthjy2dsvaoXQgizMp2Gd/d94cYBAMj32AOU895+++2nFxs0aFCiRIlMb8N4a2NwtUrtx28KN/du2P2jmVvmBBbI8H9lFN5B60P+/LR2zKpRXx9OEkIIY2pKqrB0KJBBiYCgcaM7+ihCdy889Hya0BuxhpdsHACAfI89QDlv6NChp06dyngetK+v77Jly15hE4aIn6avvNlkzsVf+7gpQgjx8NfFugxHqCxqBg9v4l6k3tQPlzSYMWJ2390fldUWK1ncTG/ddMinPZzTns9lvP3P5j13vEuYKw4tPl3R4t+N35j9wo0DAJDv8Yd/zjMzM1u+fPmBAwcmTZo0cuTIdevWHTt27KXPgX/EaNDrhRB6nd4ojMa0LDHEHJk55484o8FgSP84RVGEsPYf+XVP17++/Hh1hEFxbdmtiWbblEk7ovVCCJEa/sPQNzqP+DXK/Kmnt7904wAA5HPsAXpd6tSpU6dOnVf6FI1jARfNpWXvd455Z/Lo4A5T+75X3f/HagXjzp+8W65trZKGnVP7TvVZPTTDZyjOLSdMbP3LgHHjt7Vb0LrnjDm7WvZv6bW2XGVvi4jjpx5UHv3zpEbWT91MsTeeu/HhJbP7dQMAkAcQQCZEKdxz/mbtj4eiHUsVLN5gzcnK237ZeTbWznvErGZ1PXUnGi/ddsOzoLnWpvWwsTVqpD31S2iKvv2/pTGrT96/miiqenZf9k+d4E2bD11+YFN0TIPWzSq6aJ9xO5pibz1v44qjf5+xwwp4aYUQGf8NAEC+ojw+EpL/2dvbT5s2LSgoKJvbady48bhx4wICAnJkKplxTwKA5CpXrrxixYpKlSrl/k1zDhAAAJAOAQQAAKRDAAEAAOkQQAAAQDoEEAAAkA4BBAAApEMAAQAA6RBAAABAOgQQAACQDgEEAACkQwABAADp8Gaor0yr1b777rv29vZqD5LnXbhwwcyM70AAgAr49fPKli1bdvPmTbWnyA8URalSpYraUwAAZEQAvTIPDw8PDw+1pwAAdYSGhv79999arbZmzZpeXl5qjwNkEQEEAMiU5OTk999/f9GiRekrQ4cOnTp1qlarVXEqIGs4CRoAkCmjRo3KWD9CiGnTpn311VdqzQNkBwEEAHi5lJSUpUuXPr0+d+7cXJ8FyAEEEADg5aKjo2NjY59ev3HjRlJSUu7PA2QTAQQAeDlHR8dnrtvZ2VlZWeXyMED2EUAAgJezt7dv1qzZ0+sdOnRQFCX35wGyiQACAGTK7NmzS5QokXGlTJkyU6dOVWseIDtM4GnwKbFRd1JsCxW0fzSL4f7pXxYv23Lkyn2ta6mabXv1blPOkU4DALX5+PicOXNm5syZR44c0Wq19erVe+eddywtLdWeC8gK9QMo9cCYGq0OvhNydGwFrRD6a+v6BPRedc3Co3TZ4jZn9v+ycNr0Nxf+sfztkupPCgCys7W1HTVqlNpTADnAxHatJPw+cei61DYzj4RfO3Pk4NFz1y/9Psh106Chq6OMao8GAADyDdMKIN3ZPfvv+w+d+m5V57TBzAs3nfj5Wza7N+19oPJoAAAg/zCtABIarUbjUsA141TmTs52+sQHyewCAgAAOcQ0AsgQc3L7lj0hoVFFm7cpfuTHDdf0j68xxh3+4bdwjwrlHXmWJQAAyCHqn1qsOBYv7637Y3TH9ckGo6Ix0wr9oPeWt97U103E7P6i9ztfb73TaNa71dUfFAAA5Bfqd4WZ38jfz40UhocxEVcvXw67fPny5XBzHwshhDEu9MSdcsGLJ37asyRvNQwAAHKM+gH0iMbKpVhZl2JlqzdMX1I83/nh0DvqjQQAAPIp0zgH6AX0lzd+MWr0vENxnAQNAAByiMkHkOH6jnnf/u+H4wmZ+Nhdu3Ypz5eQkBATE/PaBwYAACbPZA6BPY957Ul/XfvY3Mk9E88CCwgIMBqfu6fI3t7excUlJ2cDAMgnMjLy1KlTzs7Ovr6+1tbWao+DLDL5PUDCwtHdw8PVxvQHBQDkbwkJCcHBwUWKFGnZsmXNmjVLlSq1bt06tYdCFtEVAABkSlBQ0IIFC9IvRkREdO/efceOHSqOhCwjgAAAeLkbN248c3/PtGnTcn8YZJ8pnANkTH2YlKJ/0bO8FDNLG0tTGBUAIKnz588/c/3s2bO5PAlyhAnsAdJfmt7Yxd7uRZxbL4jkafAAAPXY2dk9c93e3j6XJ0GOMIHdKtpSw3derjlnYOCIzaLdxC+6eD4dZVp3f2feCwwAoB4/Pz93d/eoqKgn1lu3bq3KPMgmEwggIYSVR/1BUz9c98fyiq17vFXVNGYCAOBfFhYWc+bMeeONNzIuVqxYcdSoUWqNhOwwmdjQetVtWnWnkwU7egAApqljx47nzp37+uuvjx8/7uLi0rx588GDB1tZWak9F7LCZAJImNedfGCb2kMAAPACZcuWXbJkidpTIAeYwEnQAAAAuYsAAgAA0iGAAACAdAggAAAgHQIIAABIhwACAADSIYAAAIB0CCAAACAdAggAAEiHAAIAANIhgAAAgHQIIAAAIB0CCAAASIcAAgAA0iGAAACAdAggAAAgHQIIAABIhwACAADSIYAAAIB0CCAAACAdAggAAEiHAAIAANIhgAAAgHQIIAAAIB0CCAAASIcAAgAA0iGAAACAdAggAAAgHQIIAABIhwACAADSIYAAAIB0CCAAACAdAggAAEiHAAIAANIhgAAAgHQIIAAAIB0CCAAASIcAAgAA0iGAAACAdAggAAAgHQIIAABIhwACAADSIYAAAIB0CCAAACAdAggAAEiHAAIAANIhgAAAgHQIIAAAIB0CCAAASIcAAgAA0iGAAACAdAggAAAgHQIIAABIhwACAADSIYAAAIB0CCAAACAdM7UHeIIxNTE+PiFJZ2Zt7+BgbWrTAQCAfMFE9gA9vLZj5tAudcu429vYObq6ubu5OtnaOhar0qLfZ2tP3jOoPR4AAMhXTGEfS9I/U1o2/eSoTY02HQZ0LO9V2NnOQqN7GHcnIuzUwW2zetdatWPNnnkd3E2k1QAAQJ6nfgAZb6379PPTflMO/zKsku1T13455eDYFi1GfNu/9dRa5ipMBwAA8iH1d6voLp06q6vbq98z6kcIoTjXCupRJerM2Vhjbg8GAADyK/UDSFukeFHjqb0HY55dOIaoA/sv2hYpYq/k8lwAACDfUv8QmKZE4LDu07p287/eN7hHM//yXoVd7CwUfXL8nYiwUwc3L5+3+qT3+L2NLNWeEwAA5BsvDKDEsG0L56zceujs9Xsplq6elRp2Cv6gV233HI4mpWCHObs3eo+ZOHdiv1mJhgw7ghQL1/JNe83dM75XZfoHAADkmOfGjDFmx8imHf93xqZio4DqAdWtEiLOHJgRvHLxhpk7f36nbA6fj2zp2WrMqlafJMeEX7hwNep+QrLe3NqxYDGf0t7udtqcvSkAAIDnBZDu+HdDvr9We8rhn4ZVfXz6jS5y8+DmXUaP+6nrD91dXsMpOYqli6dvLU/f/64aUpIe6jQWNpbqH60DAAD5w3Oqwnjv2NEw9x4zPqya4eRjM4/W44c0XPrV0fO67nVy6znpqfuGl20yz2fGlT8Herwsus6ePTt9+vTnXZucnJyQkJDD4wEAgDzoeQGUkpxs1Ot0T74Gsy41VXEu4JyLzx3TFK7dvX+qWzmbTHysq6trtWrVnnftsmXLLC05lwgAAAjFaHzm088NVxa28/8ouueq9V+0LWGVtnT/n/lBnSY8HHv41/6e6j99/pXZ29tPmzYtKChI7UEAAIAQQlSuXHnFihWVKlXK/Zt+3h6g+OvxBcs7/Pld+1JLPSuUL1nQPP5G6JnQqCS7UvV//rDDL0IIIcxrDF3+aWO7XJwWAAAgBzzvzGJDarJSvFG3t9IXCrsVLf3E0SVzOwtenRAAAOQ9zwkgxbnJx0ua5O4oAAAAucMEnltujN75/f+23tC/4EPMfDqNDq7twP4mAACQE0wggIS5rWXc8Q3LdlxOMncpWtzlGU/UsqhddUhwbYfcHw0AAORHJhBAinPNd2dv79TgzQq9z7678fikqiYwEwAAyM9M5ensSqG2XQNsOMYFAABygensbbFtNHKJpbYEb/0FAABeN9MJIKVg9Y7t1R4CAADIwFQOgQGA6UtISBg/fnyjRo1q1KgxcODA8PBwtScCkEWmswcIAExaZGRk/fr1L1++nHbx77//njt37p49exo0aKDuYACygD1AAJApY8eOTa+fdMHBwaoMAyCbCCAAyJRt27Y9vRgaGvp0FQEwfQQQAGRKfHz8M9fj4uJyeRIA2UcAAUCmlCtX7ulFR0dHHx+f3B8GQDYRQACQKcOHD396sU+fPnZ2drk/DIBsIoAAIFO6des2f/58Nze39JVhw4ZNmTJFxZEAZBlPgweAzBowYECPHj1OnjyZmJhYuXLlggULqj0RgCwigADgFdjZ2dWpU0ftKQBkF4fAAACAdCTaA2Q0Gvfu3WswGIQQZmZmgYGBVlZWQoh9+/adO3cu7WNYZ531F6/v3LlzzZo1cXFxpUuX9vLyUn0e1llnPU+vJyQkCJXIFUDh4eHW1tZCCEVR2rdvn/YfcPr06ePHj6d9DOuss/6C9YSEhJ49e0ZGRqat161b1zTnZJ111vPKenJyslCJYjQa1brtXGZvbz9t2rSgoCC1BwHyqunTpw8ZMiT9oqOjY3R0tIWFhYojAcjTKleuvGLFikqVKuX+TXMOEIDMCgsLy3gxNjY2IiJCrWEAIDsIIACZ5efnl/Gim5tbiRIl1BoGALKDAAKQWT179uzcuXPav93c3BYtWqTR8BgCIE+S6CRoANmk1WrXr19/5syZqKgoPz8/Z2dntScCgCwigAC8mgoVKlSoUEHtKQAgW9h9DQAApEMAAQAA6RBAAABAOgQQAACQDgEEAACkQwABAADpEEAAAEA6BBAAAJAOAQQAAKRDAAEAAOkQQAAAQDoEEAAAkA4BBAAApEMAAQAA6RBAAABAOgQQAACQDgEEAACkQwABAADpmKk9AJDHHD58+NKlS1WqVKlYsaLaswAAsog9QMAr6Nu3b+3atXv27Onr6zthwgS1xwEAZBEBBGTW7t27ly5dmn5x4sSJV65cUW8cAEDWEUBAZp07d+6lKwCAPIEAAjKrfPnyL10BAOQJBBCQWQ0bNuzXr1/6xc8++8zT01O9cQAAWcezwIBXsGjRooEDB4aGhvr5+ZUrV07tcQAAWUQAAa+mevXq1atXV3sKAEC2cAgMAABIhwACAADSIYAAAIB0CCAAACAdAggAAEiHAAIAANIhgAAAgHQIIAAAIB0CCAAASIcAAgAA0iGAAACAdNQPIMOtoz+v3Xo61vj48p2/5g9uX8PHvUCBImVqd/po8d8xBlUHBAAA+Y36AaQ/u2xQnzG/3EirnNmgxHYAABRaSURBVIQDY5oGDJx/wqpG537BgQEe11a+26DhRzvuGV+yFQAAgEwzrXeDN0b/+OXMS1Um7N8+rpqdEEII/YSf+tbsOXpu8KHR5bQqTwcAAPIJ9fcAZaS7eOqsoX7/d/3sHq9o3du/92bRswePxqk5FwAAyFdMK4A0LgVcFJ1O95/FlOQUodWy+wcAAOQU0wgg/bWNn4+a+O28NWcL+pX4a/bUXXcfn/OTcGrOV2ujK9Xzt1V1QAAAkJ+ofw6QpkTT/v3vHw87+NPslVeuRz9INRovTVoztNEHxUTEim7Vg36OLz988wAf9gABAICcon4AaUt2nDC346MLugfR1y9fvproVkAjhFHrWr3317379G9b1l5RdUY8YjAYVq1aFRIS4u3t3b9/fxsbG7UnAgAgK9QPoP8wsy3k5VvIK+2C4t76469aqzsQ/iMwMHDdunVp/168ePGhQ4esrKzUHQkAgCwwsQB6mu7YN28M3FBsxMZZXQq+bDdQcnLy6dOnn3etwcALKmbLhQsX0utHCHH8+PFNmzZ17dpVxZEAAMgakw8goUuKux+bkJKZeAkJCRk0aNDzrk1OTr5//34OTiabmzdvPrESERGhyiQAAGSTyQeQmf+4PaHjMvexderU+fvvv593rb29vZOTU07NJaHKlSsXKlQoOjo6faVevXoqzgMAQJaZxtPgkRc4OTktWLDAzc0t7eK3335bvXp1dUcCACBrTGUPkP7Oid/W/rBl3z/nr0bdi0/SmVk7FChWqlKtZm8Edm1Ywlrt8ZCmffv2LVu2vHz5ctGiRe3s7F7+CQAAmCRT2ANkjP59RN0y1TqNXHwgUnEr41e7UUDDWlW8nR5e3PLtgICyvt0WnUtWe0Y8ZmFhUbZsWeoHAJCnmcAeoAfbxwbNvNtibsisvlWcn3i9w5RbB2b07zYkeHaD3UNL8VqIAAAgR6i/B0h3esfumPojpvV/qn6EEBZudYdMfb/M8Z0HeTNUAACQU9QPIMXW3tYYc/uO/jnXp969E6e1sTHP1aEAAEB+pn4Aact1Cax6/ssugV/+dCQ8LsMbwRtTYi7uWzHmjbfnJHV8qwlvhgoAAHKKCZwDpC03dO26e/3fn9S15hhhZuNcwNnOQtEnx8fciU0yaAtU7fn9b9PbufBmYAAAIKeYQAAJYVaszRfbW4y4eGjPgePnr0bdT0jWm1s7FizmU9G/Yf3Kha2JHwAAkJNMIoCEEEKYOZeq37FUfbXHAAAA+Z/65wABAADkMgIIAABIhwACAADSIYAAAIB0CCAAACAdAggAAEiHAAIAANIhgAAAgHQIIAAAIB0CCAAASIcAAgAA0iGAAACAdAggAAAgHQIIAABIhwACAADSIYAAAIB0CCAAACAdAggAAEjHTO0B8phLly7t37/f1dW1VatWZmbcewAA5En8Cn8FK1eu7NmzZ9q//fz89u7da2trq+5IAAAgCzgEllkGg2Hw4MHpF48dOzZv3jwV5wEAAFlGAGVWdHR0TExMxpXz58+rNQwAAMgOAiiz3Nzc3NzcMq74+vqqNQwAAMgOAiizFEXJeMyrcePGwcHBKs4DAACyjJOgX0GHDh2ioqIOHz5csGDB2rVrK4qi9kQAACArCKBX4+bm1qFDB7WnAAAA2cIhMAAAIB0CCAAASIcAAgAA0iGAAACAdAggAAAgHQIIAABIhwACAADSIYAAAIB0CCAAACAdAggAAEiHAAIAANIhgAAAgHQIIAAAIB0CCAAASIcAAgAA0iGAAACAdAggAAAgHQIIAABIhwACAADSIYAAAIB0CCAAACAdAggAAEiHAAIAANIhgAAAgHQIIAAAIB0CCAAASIcAAgAA0iGAAACAdAggAAAgHTO1B8hAnxB54Wzo1ah78Uk6M2uHAsVKVSjv7Wqp9lgAACC/MY0ASrq08cuPJ8z77UR0sjHDsqK192rw1sivPg/2d1FUGw4AAOQ3JhBAxqgf+zcK3OzYbuC3Y5r5l/cq7GxnodE9jLsTEXbq4Nbls4c1OXZ7z56xflZqDwoAAPIJ9QPIcHn1d79YDdh4cFYzx4y7edw8ipeqVLtl4Nu136wyZNau4YtaUUAAACBHqH8StP5WxC2lXK0ajs8+yKUUrFnbJ/HmzQTjM68GAAB4ZeoHkFlpP1+L/Yvn/B33rMTR394ze+VxD9+KTpwEBAAAcoj6h8CUAl0nTVzaeFhdn7VN2jTxL+9V2MXOQtEnx9+JCDt18PfNeyOKBq/7qIb6gwIAgPzCFLrCouKgzcerLvt+7tptG2asvX7vocEoFMXczr1kxZpNx6z/8N32Ze3Z/wMAAHKMKQSQEMLCo/6Ar+oP+EoIYUh9mJisN7eysTSjegAAwOug/jlAT9KYW9nZ2abXjzHmzM4tW/+6lqzuVAAAIB8xkT1Az6c7Na9v+3k+M678OdDjZXuEDh48OGjQoOddm5SUFBcXl8PjAQCAPMjkA0hbrtf05XXsazhn4nhYtWrV5s2b97xre/bsWatWrZycDQAA5E0mH0CaQtU7BlbP3MdaWlpWq1btedc6OjpqNKZ3yA8AAOQ6Uwog3gwVAADkCtMIIN4MFQAA5CITCCDeDBUAAOQu9QOIN0MFAAC5TP2TgnkzVAAAkMvUDyDeDBUAAOQy9Q+B8WaoAAAgl5lCV/BmqAAAIFeZQgAJ3gwVAADkJhMJoAw05lZ25q9p2xs3bjx58mQ2N7Jr1y6j0Whu/rqGNH0REREeHh6KImmgGo3GyMjIIkWKqD2IanQ63Z07d9zd3dUeRDVJSUlJSUkuLi5qD6Ka2NhYrVZrZ2en9iCquX37tqOjo4WFhdqDqCYqKqpDhw7Zvwfu3r2bI/NkgekF0GvTv3//o0ePxsTEZHM727Ztc3BwsLW1zZGp8qKLFy96eXmZmUn0zZORXq+/dOlSmTJl1B5ENUlJSbdu3fL09FR7ENXExsYmJiYWLlxY7UFUEx0drdVqXV1d1R5ENdevX3dycrK3t1d7ENWEhYU5OTll/8+Azp07q/VgohiNPL/81TRu3HjcuHEBAQFqD6IaDw+PkJAQaR/979+/7+Xlde/ePbUHUc3hw4eHDh166NAhtQdRzZIlS/bt27d48WK1B1HNqFGjXF1dR44cqfYgqunQoUP//v3bt2+v9iCqKV269ObNm0uVKqX2IFmn/tPgAQAAchkBBAAApEMAAQAA6RBAAABAOgQQAACQDgEEAACkQwABAADpEECvzMzMTOaXgRZCmJmZSfsqiIJvAOm/AYQQ5ubmkt8D/BRwD+SDxwFeCPGVxcTEODs7S/tGEEKIu3fvyvwKsEL6e8BoNN67d0/mN4JITU1NSkpycHBQexDVPHjwQKvVWllZqT2Iau7fv29vb6/VatUeRDX54GGQAAIAANLhEBgAAJAOAQQAAKRDAAEAAOkQQAAAQDoEEAAAkA4BBAAApEMAAQAA6RBAAABAOgQQAACQDgEEAACkk7ffyQy5Th93/fyFiARztzLlvZxkfCdAQ+LN0LNXYzUFvMv7FLSS9w3hJJUcceLIpfuGfxc0jj7+VYpYqjeROlJiLp8Ni7PzKutdQKofAsPtswfO3jY8sapYFa3i7+0g0x0hUmNvXAy7rXX38fawz8MZYcQrSj40qVWvpeF6tefIdYbonRNaFLdO+ylXbLzbTfrzplz3QuLJeT3KO2gURVEUxcylatDK0GS1Z1JLYsh3PVqM3HzfoPYguSo1ZGyF/z7aW9SbdkWunwLd9d9GNvSwVIQQiplbvRFbIiX6+hPWdHrG279qvYbsS1F7tNyTcmndwBoFzBQhhFAs3Ot99Ot1ndozZRGHwF6RLnz11zN3hkYny/YessY7P3745uTjZUdvOhMdf+/ClpGef03oOmDpjSf/GMq/dKe+7TN4s13QhvP3HibeCpnfMm5Z8IA5YfLcARkkHJjQZ9Ta3Sdvpqo9Se5KvXb5hkXL7/45n+7U6t5FZHoU1Z37rkeP72+1mHvkRsyto7MaXP+uz+AfbknzaGjTZsbJ8xmd+mVQBYdKgT38pNkdrr80q2/fxfFtFx+7FR8XcWh6vevTe76zLCKPPg6qXWB5huHOrm/f6dKwtJNWEeY1p1zIq8mbRYa7y9vbWtabdvnxX3v6q983tLJqOjdSll0AuvNf+Vu6BW1NenRZf2VaPQurtstiZLkD0hnu/fFBGQdbG8Wy5cLbUn31+rBv61qXHnk4Ve1BVJO0471iFqWG7X/0U6C/saCdW+Hua+T7IUijC5vdrFCl0YcfqD1I7jFEL2xpadlkzuMHfl3oV/4Wtl1/SFB3rCyS6W+XbFLM7dzL1u828M0qtlId601juHMvxc23gX/Rx98xGrcSxawMCXEJebT8X5liXSVw3IS3qlg8XtBqtYrW0tJMsu8G4+3fPnpnfakJowKkO/FF6MMvhwtP72KJkeeO/RMa9UCv9kC5TXfi9z9vFWvX2f/RcSBNkaBfoyLXdHeW7IcgjfHmulGTrnT+9uOaNmqPknsUC1tbC2PsvdhHD/yGuLgEo5WNjVbdsbIoD5+9lMsUl7rBE+oKkfJ71KKfTqk9Ta7Tlh60NWzQv5eNMX/8vOeBe/vqxfLmN/6r0xRvMXiMEEKk3L18PuzKma3/++Zo8V4bmtupPViuMtz8cdD726p+81cf4/ufCMkCwBh39codfeiMJiUGht43GBXzQv7BM1b9r5u3xcs/N39IuHDumuJdtkTMiU2bd19KcilVvWHjmsUl+vWfUcLuL8bvrvbJ8cYOak+SqxzbfDSsautver1nO6KDt/7sD1/OulXnk8GNn3FqVB5AAOHVJYX9Mr73gJW6NguHN8yb3/fZoL+6sEf1j4+kKhY+by8e1kCqv3314csHDj5Qf8aRwKLaVWoPk/v01y6H6xRtuQ+2bu9TySJi/6KPgsb0edOt9KFxVeQ4A8QQcyfGIOJWd680NNSxdDHzqNDQ+x7dF2xb+lZJ6X6TGMIWTVym6b0tUKpTwIQQwr5qz8HtVvVeMKTHEjOh05lXHPhjYEVrtafKGtn+75BNqTd2fNWlapUu8+LbL9i+orenfN9A2lLD992/d+PkprHef/ZtOOCn29KcAKq7OC94xMlWs6Z3dpep+v5lVmHk7oibp9e+X6uwrY1r6eYjFk95w/bE0hVHZDkV3KhLSTWmnL1S9Jvj4ReOhZy5emZV59R1HwxdHSXND8FjyQdmzvi7ysD3asl2INh4+9f3mvbdWfarPTcSHj6Mvfz76ELruzYdviMuT34LyPf7C1mmj9w6omGVll+G+o3//fSRRX0qynX05zFFa2HjVMS3zSffD656++dVf8arPVDuMEauGDbmSPm32tuf2btnz5795+8aDDEXDu7ZdypKlt//wsK+QCFn6/QHTcW1bv0Kmsir11PUHCoXKTZ2toq5/4eT3/KxFkIIixKdh/cu/2D374eT1R4tlz3YueyH2w37dPeS7Teo8dbPs9ZE1Rs7d0h9DyuNxtaz2dh5I/2uLJ69OU7t0bJCtv8+ZFniXxPbdZ2T0Gnl30dWD29STLY/fAzXZzWxcwnc8CB9RePg7KjRJyVK8ooIhtioqAf3905+I6BRo0aNGrX5/EBK6pEpHQKajfjtniT3QMTuhd8t2hP572n/xvj4BOHg6iLHATAhNAV9vJ00lpb/nvOksXewU4xGoxzfAenub1uxMa5u5zZu0u0KNcTeu2+wKOTmkp4OmkKFC2lS7t/Lk0+HIYCQKcabaz/7LrTa5A1z3iyVRw/3Zo/GvZqfR8LOdb89fs0T3ZVfNhw1lqrhJ8lZQNpyH//1UJfu7rJ2VpYt5t9MTdwSVEiOe0Cxitw6YeC7U/c92ttvvL97zrJTzs1b+8sSQMKydofWzkeWLjyWmHY5MWTpqn8sajeqIdffQw/2btweX6lJw4JyfONnpC1R079w4o4V668/egaE7sqalXv13jX93fJiTEh36hqyJuXvPYcSLYrvmhx0IsMPvVnZt78e2cRFiocBc/9B4zus6dO3VpOtnWoV1l3euW7DKfegHz+sIs3PkKLR/PuUPzONIoSiMdNq8uLjXpYorp3GjZnXeHSH2mGB7Spa3zryyw/79J2WTG7nJMUPgBBCCIdW479sXieoqf8/ga3LGs9vWbMlquZXC3sWleabQAghUv/ZvT+ucHv/4lJ91Y9YNfj4m8CtbwfVrL+1W8Pi+kt/rtt4zn3Aj0Or5cnHwTw5tKo0LmXqNLAoZi3PY54QQhjjDa7V61dOjQu/mvFQr7lTnDzPhNYUe2v1X8WXzFr2x8mQYxpX/6GrFr7TxVeiX37/oXXzbdAgtbA0+z6EEEJYVRnx+7Eqi2av3nHqhMa9ctC8L/p39y8kywtBCCGE0Hr2XnvIY970ZX+ePm/n2fHLrUF9mnnKtU/YcPtmqnfjwNaSPPXvSZoiXZb8VbLlwlU7Qs6c1bg3HrVmaVCnio5583FQke7oLQAAkJ6M+/AAAIDkCCAAACAdAggAAEiHAAIAANIhgAAAgHQIIAAAIB0CCAAASIcAAgAA0iGAAACAdAggAAAgHQIIAABIhwACAADSIYAAAIB0CCAAACAdAggAAEiHAAIAANIhgAAAgHQIIAAAIB0CCAAASIcAAgAA0iGAAACAdAggAAAgHQIIAABIhwACAADSIYAAAIB0CCAAACAdAggAAEiHAAIAANIhgAAAgHQIIAAAIB0CCAAASIcAAgAA0iGAAACAdAggAAAgHQIIAABIhwACAADSIYAAAIB0CCAAACAdAggAAEiHAAIAANIhgAAAgHQIIAAAIB0CCAAASIcAAgAA0iGAAACAdAggAAAgHQIIAABIhwACAADSIYAAAIB0CCAAACAdAggAAEiHAAIAANIhgAAAgHQIIAAAIB0CCAAASIcAAgAA0iGAAACAdAggAAAgHQIIAABIhwACAADSIYAAAIB0CCAAACCd/wOh/OMdhEee7wAAAABJRU5ErkJggg==" alt="Diagram showing how to find units that belong in the take-all stratum." /></p>
+<div class="footnotes footnotes-end-of-document">
+<hr />
+<ol>
+<li id="fn1"><p>To see why this needs to be done repeatedly, consider a
+population with three units with sizes 1, 2, and 3 and find which units
+have an inclusion probability greater than 1 when the sample size is
+3.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

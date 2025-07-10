@@ -449,8 +449,8 @@ flexible than the bootstrap estimator, but is more precise.</p>
 <span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  y <span class="ot">&lt;-</span> y[w <span class="sc">&gt;</span> <span class="dv">1</span>]</span>
 <span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>  w <span class="ot">&lt;-</span> w[w <span class="sc">&gt;</span> <span class="dv">1</span>]</span>
 <span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(y)</span>
-<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>  Y <span class="ot">&lt;-</span> <span class="fu">sum</span>(y <span class="sc">*</span> w)</span>
-<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>  n <span class="sc">/</span> (n <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="fu">sum</span>((<span class="dv">1</span> <span class="sc">-</span> <span class="dv">1</span> <span class="sc">/</span> w) <span class="sc">*</span> (w <span class="sc">*</span> y <span class="sc">-</span> Y <span class="sc">/</span> n)<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>  total <span class="ot">&lt;-</span> <span class="fu">sum</span>(y <span class="sc">*</span> w)</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>  n <span class="sc">/</span> (n <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="fu">sum</span>((<span class="dv">1</span> <span class="sc">-</span> <span class="dv">1</span> <span class="sc">/</span> w) <span class="sc">*</span> (w <span class="sc">*</span> y <span class="sc">-</span> total <span class="sc">/</span> n)<span class="sc">^</span><span class="dv">2</span>)</span>
 <span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>}</span>
 <span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a></span>
 <span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>var <span class="ot">&lt;-</span> <span class="fu">with</span>(</span>

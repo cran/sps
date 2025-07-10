@@ -7,7 +7,8 @@
 #' than 1 in practice, and so they are constructed iteratively by taking units
 #' with \eqn{\pi \geq 1 - \alpha}{\pi >= 1 - \alpha} (from largest to smallest)
 #' and assigning these units an inclusion probability of 1, with the remaining
-#' inclusion probabilities recalculated at each step. If \eqn{\alpha > 0}, then
+#' inclusion probabilities recalculated at each step. See `vignette("take-all")`
+#' for details. If \eqn{\alpha > 0}, then
 #' any ties among units with the same size are broken by their position.
 #'
 #' The `becomes_ta()` function reverses this operations and finds the critical
@@ -23,6 +24,10 @@
 #'
 #' `becomes_ta()` returns an integer vector giving the sample size at which a
 #' unit enters the take-all stratum.
+#'
+#' @note
+#' [`kit::topn()`] is used if available to improve performance in the normal
+#' case when the sample size is small relative to the population.
 #'
 #' @seealso
 #' [sps()] for drawing a sequential Poisson sample.
@@ -121,13 +126,12 @@ ta_units <- function(x, n, alpha) {
   # it is possible for the result to not resolve ties according to x
   # (as documented) when alpha is large enough to make at least one unit with
   # x[n] TA.
-  ord <- order(x, decreasing = TRUE)
-  s <- seq_len(n)
-  possible_ta <- rev(ord[s])
+  if (n == 0L) {
+    return(integer(0L))
+  }
+  possible_ta <- rev(topn(x, n))
   x_ta <- x[possible_ta] # ties are in reverse
-  definite_ts <- ord[seq.int(n + 1, length.out = length(x) - n)]
-
-  p <- x_ta * s / (sum(x[definite_ts]) + cumsum(x_ta))
+  p <- x_ta * seq_len(n) / (sum(x[-possible_ta]) + cumsum(x_ta))
   # The sequence given by p has the following properties
   # 1. if p[k] < 1, then p[k + 1] >= p[k],
   # 2. if p[k] >= 1, then p[k + 1] >= 1,
@@ -191,4 +195,14 @@ stratified_pi <- function(x, n, strata, alpha, cutoff) {
     stop("'cutoff' must be a single value or have a value for each stratum")
   }
   Map(pi, split(x, strata), n, alpha, cutoff)
+}
+
+#' Faster order
+#' @noRd
+topn <- function(x, n, decreasing = TRUE) {
+  if (requireNamespace("kit", quietly = TRUE)) {
+    kit::topn(x, n = n, decreasing = decreasing, hasna = FALSE)
+  } else {
+    order(x, decreasing = decreasing)[seq_len(n)]
+  }
 }
