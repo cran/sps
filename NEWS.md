@@ -1,3 +1,12 @@
+## sps 0.6.2
+
+- Added `divisor_method()` to more easily generate divisor functions for
+`prop_allocation()` by name.
+
+- `prop_allocation()` is now faster.
+
+- Added `sps_iterator()` to make an iterator that draws a SPS one unit at a time.
+
 ## sps 0.6.1
 
 - Added a new vignette to show how inclusion probabilities are calculated.

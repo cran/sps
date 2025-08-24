@@ -42,16 +42,19 @@
 #' # samples with two or more units
 #' becomes_ta(x)
 #'
+#' # Determine the number of take-all units before drawing a sample
+#' n_ta <- function(x, n, ...) {
+#'   sum(becomes_ta(x, ...) <= n, na.rm = TRUE)
+#' }
+#'
+#' n_ta(x, 7)
+#'
 #' # Use the inclusion probabilities to calculate the variance of the
 #' # sample size for Poisson sampling
 #' sum(pi * (1 - pi))
 #'
 #' @export
-inclusion_prob <- function(x,
-                           n,
-                           strata = NULL,
-                           alpha = 1e-3,
-                           cutoff = Inf) {
+inclusion_prob <- function(x, n, strata = NULL, alpha = 1e-3, cutoff = Inf) {
   x <- as.numeric(x)
   n <- as.integer(n)
   alpha <- as.numeric(alpha)
@@ -88,8 +91,8 @@ becomes_ta <- function(x, alpha = 1e-3, cutoff = Inf) {
   x[ta] <- 0
   ord <- rev(order(x, decreasing = TRUE))
   x <- x[ord]
-  res <- pmax.int(ceiling(cumsum(x) / x * (1 - alpha)), 1) +
-    length(x) - seq_along(x) + length(ta)
+  offset <- length(x) - seq_along(x) + length(ta)
+  res <- pmax.int(ceiling(cumsum(x) / x * (1 - alpha)), 1) + offset
   res[order(ord)]
 }
 

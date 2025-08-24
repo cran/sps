@@ -23,7 +23,7 @@ drawing probability-proportional-to-size samples with a given number of
 units, and is commonly used for price-index surveys. This package gives
 functions to draw stratified sequential Poisson samples according to the
 method by Ohlsson (1998), as well as other order sample designs by Rosén
-(1997), and generate appropriate bootstrap replicate weights according
+(1997), and generate approximate bootstrap replicate weights according
 to the generalized bootstrap method by Beaumont and Patak (2012).
 
 ## Installation
@@ -37,7 +37,10 @@ install.packages("sps")
 The development version can be installed from R-Universe
 
 ``` r
-install.packages("sps", repos = c("https://marberts.r-universe.dev", "https://cloud.r-project.org"))
+install.packages(
+  "sps",
+  repos = c("https://marberts.r-universe.dev", "https://cloud.r-project.org")
+)
 ```
 
 or directly from GitHub.
@@ -55,17 +58,17 @@ Poisson sample can be drawn with the `sps()` function.
 ``` r
 library(sps)
 
-# Generate some data on sizes for 12 businesses in a single 
+# Generate some data on sizes for 12 businesses in a single
 # stratum as a simple example
 revenue <- c(1:10, 100, 150)
 
 # Draw a sample of 6 businesses
 (samp <- sps(revenue, 6))
-#> [1]  3  6  7  8 11 12
+#> [1]  6  7  9 10 11 12
 
 # Design weights and sampling strata are stored with the sample
 weights(samp)
-#> [1] 4.583333 2.291667 1.964286 1.718750 1.000000 1.000000
+#> [1] 2.291667 1.964286 1.527778 1.375000 1.000000 1.000000
 levels(samp)
 #> [1] "TS" "TS" "TS" "TS" "TA" "TA"
 ```
@@ -85,10 +88,10 @@ stratum <- rep(c("a", "b"), c(9, 3))
 
 # Draw a stratified sample
 (samp <- sps(revenue, allocation, stratum))
-#> [1]  5  8  9 10 11 12
+#> [1]  4  6  8 10 11 12
 
 weights(samp)
-#> [1] 3.000000 1.875000 1.666667 1.000000 1.000000 1.000000
+#> [1] 3.750 2.500 1.875 1.000 1.000 1.000
 levels(samp)
 #> [1] "TS" "TS" "TS" "TA" "TA" "TA"
 ```
@@ -98,13 +101,13 @@ replicate weights with the `sps_repweights()` function.
 
 ``` r
 sps_repweights(weights(samp), 5)
-#>          [,1]     [,2]      [,3]      [,4]     [,5]
-#> [1,] 5.812219 3.000000 0.1877812 3.0000000 3.000000
-#> [2,] 3.515461 3.515461 2.6952305 0.0001875 3.515461
-#> [3,] 2.291604 2.916542 2.9165417 1.3541979 1.354198
-#> [4,] 1.000000 1.000000 1.0000000 1.0000000 1.000000
-#> [5,] 1.000000 1.000000 1.0000000 1.0000000 1.000000
-#> [6,] 1.000000 1.000000 1.0000000 1.0000000 1.000000
+#>           [,1]     [,2]      [,3]      [,4]      [,5]
+#> [1,] 0.0003750 3.515648 3.5156484 7.9683281 3.5156484
+#> [2,] 0.6251875 6.718328 5.3122187 0.6251875 2.0312969
+#> [3,] 1.7578242 1.757824 0.0001875 0.0001875 0.0001875
+#> [4,] 1.0000000 1.000000 1.0000000 1.0000000 1.0000000
+#> [5,] 1.0000000 1.000000 1.0000000 1.0000000 1.0000000
+#> [6,] 1.0000000 1.000000 1.0000000 1.0000000 1.0000000
 #> attr(,"tau")
 #> [1] 1.066773
 ```
@@ -114,14 +117,20 @@ coordinated samples, top up a sample, and estimate variance.
 
 ## Prior work
 
-There are a number of packages on CRAN for drawing samples proportional
-to size, but these generally do not include the sequential Poisson
-method. The **sampling** package contains a function for drawing
-sequential Poisson samples, but it does not allow for stratification,
-take-all units, or the use of permanent random numbers. By contrast, the
+There are many packages on CRAN for drawing samples proportional to
+size, but these generally do not include the sequential Poisson method.
+The **sampling** package contains a function for drawing sequential
+Poisson samples, but it does not allow for stratification, take-all
+units, or the use of permanent random numbers. By contrast, the
 **prnsamplr** package allows for the use of stratification and permanent
 random numbers with Pareto order sampling, but does not feature other
 order-sampling methods (like sequential Poisson).
+
+## Contributing
+
+All contributions are welcome. Please start by opening an issue on
+GitHub to report any bugs or suggest improvements and new features. See
+the contribution guidelines for this project for more information.
 
 ## References
 
